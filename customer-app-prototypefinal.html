@@ -1,0 +1,6159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Farm Market — Customer App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --moss: #1e3a28;
+        --moss2: #2a5030;
+        --moss3: #3a6040;
+        --cream: #faf6ee;
+        --paper: #f2ead8;
+        --turmeric: #e09a30;
+        --terra: #c05a28;
+        --line: #e0d8c8;
+        --ink: #1a1f16;
+        --muted: #8a8470;
+        --good: #2e7048;
+        --good-bg: #ebf5ee;
+        --warn: #c07020;
+        --warn-bg: #fdf3e2;
+        --red: #c03030;
+        --white: #ffffff;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: "Inter", system-ui, sans-serif;
+        background: #111816;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 28px 16px;
+      }
+
+      /* ── PHONE SHELL ── */
+      .phone {
+        width: 393px;
+        height: 760px;
+        flex: none;
+        background: #080e09;
+        border-radius: 52px;
+        padding: 11px;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.07),
+          0 60px 120px -20px rgba(0, 0, 0, 0.9),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+      .phone::before {
+        content: "";
+        position: absolute;
+        right: -3px;
+        top: 138px;
+        width: 3px;
+        height: 72px;
+        background: #1a1a1a;
+        border-radius: 0 3px 3px 0;
+        box-shadow: 0 92px 0 #1a1a1a;
+      }
+      .phone::after {
+        content: "";
+        position: absolute;
+        left: -3px;
+        top: 106px;
+        width: 3px;
+        height: 42px;
+        background: #1a1a1a;
+        border-radius: 3px 0 0 3px;
+        box-shadow:
+          0 56px 0 #1a1a1a,
+          0 112px 0 #1a1a1a;
+      }
+      .phone {
+        position: relative;
+      }
+      .screen {
+        width: 100%;
+        height: 100%;
+        background: var(--cream);
+        border-radius: 42px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── STATUS BAR ── */
+      .sb {
+        height: 54px;
+        flex: none;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 0 26px 9px;
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink);
+        position: relative;
+        z-index: 20;
+        flex-shrink: 0;
+      }
+      .sb-pill {
+        position: absolute;
+        left: 50%;
+        top: 9px;
+        transform: translateX(-50%);
+        width: 124px;
+        height: 34px;
+        background: #080e09;
+        border-radius: 20px;
+      }
+      .sb-r {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        z-index: 2;
+      }
+
+      /* ── VIEWS ── */
+      .view {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      /*.view.active {
+        display: flex; 
+      }*/
+
+      .view::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* ── COMMON ── */
+      .ibtn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--white);
+        border: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex: none;
+        transition: transform 0.12s;
+      }
+      .ibtn:active {
+        transform: scale(0.88);
+      }
+      .ibtn svg {
+        width: 16px;
+        height: 16px;
+      }
+      .btn {
+        border: none;
+        border-radius: 14px;
+        padding: 15px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        width: 100%;
+        font-family: "Inter", sans-serif;
+        transition: transform 0.12s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-moss {
+        background: var(--moss);
+        color: #fff;
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--moss);
+        border: 1.5px solid var(--moss);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 4px 9px;
+        border-radius: 999px;
+      }
+      .badge.green {
+        color: var(--good);
+        background: var(--good-bg);
+      }
+      .badge.amber {
+        color: var(--warn);
+        background: var(--warn-bg);
+      }
+      .badge .led {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .inp {
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 15px;
+        background: #fff;
+        font-family: "Inter", sans-serif;
+        color: var(--ink);
+        outline: none;
+      }
+      .inp:focus {
+        border-color: var(--moss);
+      }
+      .lbl {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: block;
+      }
+      .divider {
+        height: 1px;
+        background: var(--line);
+        flex-shrink: 0;
+      }
+      .toast {
+        position: absolute;
+        bottom: 90px;
+        left: 18px;
+        right: 18px;
+        background: var(--ink);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 500;
+        text-align: center;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: all 0.22s;
+        z-index: 999;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .sec-hd {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 18px 10px;
+      }
+      .sec-title {
+        font-family: "Fraunces", serif;
+        font-size: 17px;
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .sec-link {
+        font-size: 12px;
+        color: var(--terra);
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* ── BOTTOM NAV ── */
+      .bnav {
+        flex: none;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px 0 20px;
+        border-top: 1px solid var(--line);
+        background: var(--white);
+      }
+      .ni {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-size: 9.5px;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+      }
+      .ni svg {
+        width: 22px;
+        height: 22px;
+      }
+      .ni.on {
+        color: var(--moss);
+      }
+      .ni .dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--moss);
+        margin-top: 1px;
+        display: none;
+      }
+      .ni.on .dot {
+        display: block;
+      }
+
+      /* ═══════════════════════════
+   CSS FOOD ILLUSTRATIONS
+═══════════════════════════ */
+      .fc {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Vegetables */
+      .fc-tomato {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://static.vecteezy.com/system/resources/previews/045/808/109/large_2x/a-fresh-ripe-tomato-with-slice-isolated-on-a-transparent-background-free-png.png")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-potato {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://t4.ftcdn.net/jpg/02/75/77/89/360_F_275778955_xxJe5fQvDy5oXbjupdJ162zLwU4sf3kT.jpg")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-onion {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2qWwl26t9i1ubzuL78n3hO4io3b2UCMyvfqBmvGLqQw&s=10")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-brinjal {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoZmdkxRRW2XLnw5PwiURS3PU-C6lvLOlNdwXo5A9KsQ&s=10")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-cucumber {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://media.istockphoto.com/id/967491012/photo/whole-with-slice-cucumber-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=Kmeq5UlXegj7sQEGicTWbxqngB3j57JZBmOM-P_nTwU=")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-capsicum {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://t3.ftcdn.net/jpg/01/01/06/94/360_F_101069451_91kWjNXdA9dPrag5qyRX2ah0rmgAfdee.jpg")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      /* Fruits */
+      .fc-banana {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://images.apollo247.in/pd-cms/cms/2025-05/AdobeStock_299290543.webp?tr=q-80,f-webp,w-400,dpr-2.5,c-at_max%201000w")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-apple {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://static.libertyprim.com/files/familles/pomme-large.jpg?1569271834")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-mango {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://img.magnific.com/free-photo/mango-still-life_23-2151542114.jpg?w=360")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-orange {
+        background: linear-gradient(135deg, #fff0d8, #ffe0b0);
+      }
+      .fc-orange::before {
+        content: "";
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 33%, #ffa830, #e07010);
+        box-shadow: 3px 5px 14px rgba(180, 100, 0, 0.2);
+      }
+      .fc-orange::after {
+        content: "";
+        position: absolute;
+        width: 9px;
+        height: 15px;
+        background: #5a7830;
+        border-radius: 40%;
+        transform: translate(2px, -32px) rotate(10deg);
+      }
+
+      .fc-grapes {
+        background: linear-gradient(135deg, #f0e8f8, #e0d0f0);
+      }
+      .fc-grapes::before {
+        content: "";
+        position: absolute;
+        width: 38px;
+        height: 48px;
+        background: radial-gradient(circle at 50% 38%, #a060d0, #7030a0);
+        border-radius: 40% 60% 50% 50%;
+        box-shadow:
+          inset -8px 0 0 rgba(0, 0, 0, 0.15),
+          3px 5px 14px rgba(80, 20, 120, 0.2);
+      }
+      .fc-grapes::after {
+        content: "";
+        position: absolute;
+        width: 7px;
+        height: 13px;
+        background: #5a7830;
+        border-radius: 40%;
+        transform: translate(0, -30px) rotate(5deg);
+      }
+
+      .fc-papaya {
+        background: linear-gradient(135deg, #ffecd8, #ffd8a8);
+      }
+      .fc-papaya::before {
+        content: "";
+        position: absolute;
+        width: 42px;
+        height: 62px;
+        background: radial-gradient(ellipse at 42% 32%, #ffbe60, #e88020);
+        border-radius: 50% 50% 44% 56%;
+        box-shadow: 3px 5px 14px rgba(200, 100, 0, 0.2);
+      }
+
+      /* Leafy Greens */
+      .fc-spinach {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://sgwetmarket.com.sg/cdn/shop/articles/leafy-vegetables-blog-article.jpg?v=1593677733")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-fenugreek {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTjwibIAimR0VrQvs1OfRABXLTyvrQI802oDo1xJMbj9sfPgVxBtGFAmBqmdkPnqa0vWkGB9UNQy8Xoc2zcIZCLBuy8tGPs6g")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-coriander {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://png.pngtree.com/png-vector/20240528/ourmid/pngtree-organic-green-parsley-and-coriander-herb-clipart-png-image_12527058.png")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-mint {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://cdn.pixabay.com/photo/2020/04/04/01/34/mint-5000528_1280.png")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-curryleaves {
+        background: linear-gradient(135deg, #dcf0dc, #bcdcbc);
+      }
+      .fc-curryleaves::before {
+        content: "";
+        position: absolute;
+        width: 54px;
+        height: 52px;
+        background: radial-gradient(circle at 42% 40%, #48a848, #207020);
+        border-radius: 60% 40% 50% 50%;
+        box-shadow: 3px 5px 14px rgba(20, 90, 20, 0.2);
+      }
+
+      /* Grains */
+      .fc-millet {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://nutritionsource.hsph.harvard.edu/wp-content/uploads/2024/11/AdobeStock_309525745-1024x652.jpeg")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-rice {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://t4.ftcdn.net/jpg/05/16/35/47/360_F_516354718_dPoyJgoRz2CQPNUuzzBbc6JCCfMRwrD9.jpg")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-wheat {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://5.imimg.com/data5/MF/UA/QD/SELLER-77100760/wheat-seed-hd-2967-.jpg")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-oats {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://t3.ftcdn.net/jpg/01/27/18/72/360_F_127187211_Lj3BnpJX5pGJO4ElrUMhWoZO9imT1XcC.jpg")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      .fc-quinoa {
+        background: linear-gradient(135deg, #f8f0e8, #eee0d0);
+      }
+      .fc-quinoa::before {
+        content: "";
+        position: absolute;
+        width: 56px;
+        height: 42px;
+        background: radial-gradient(ellipse at 50% 55%, #c8a880, #a08060);
+        border-radius: 50% 50% 55% 55%;
+        box-shadow: 3px 5px 14px rgba(100, 70, 30, 0.15);
+      }
+
+      .fc-barley {
+        background: linear-gradient(135deg, #f0edd8, #e0d8b0);
+      }
+      .fc-barley::before {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 60px;
+        background: linear-gradient(180deg, #d8b838, #a88818);
+        border-radius: 6px;
+        box-shadow:
+          16px 2px 0 #c8a828,
+          -14px 4px 0 #d0b030;
+      }
+
+      /* Dairy */
+      .fc-dairy {
+        position: relative; /* ensure pseudo-elements position correctly */
+        width: 58px; /* match the image size */
+        height: 58px;
+        background: url("https://domf5oio6qrcr.cloudfront.net/medialibrary/9685/iStock-544807136.jpg")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+
+      /* Pulses */
+      .fc-pulses {
+        background: linear-gradient(135deg, #fff0d8, #ffe4b8);
+      }
+      .fc-pulses::before {
+        content: "";
+        position: absolute;
+        width: 62px;
+        height: 46px;
+        background: radial-gradient(ellipse at 50% 55%, #e8a840, #c07820);
+        border-radius: 50% 50% 60% 60%;
+        box-shadow: 3px 5px 14px rgba(160, 80, 0, 0.15);
+      }
+
+      /* Spices */
+      .fc-spices {
+        background: linear-gradient(135deg, #fff0e8, #ffded0);
+      }
+      .fc-spices::before {
+        content: "";
+        position: absolute;
+        width: 56px;
+        height: 42px;
+        background: radial-gradient(ellipse at 50% 55%, #e87040, #b04020);
+        border-radius: 50% 50% 55% 55%;
+        box-shadow: 3px 5px 14px rgba(160, 40, 10, 0.15);
+      }
+
+      /* Eggs */
+      .fc-eggs {
+        background: linear-gradient(135deg, #fff8f0, #feeedd);
+      }
+      .fc-eggs::before {
+        content: "";
+        position: absolute;
+        width: 42px;
+        height: 52px;
+        background: radial-gradient(ellipse at 45% 38%, #fff8f0, #f0e0c8);
+        border-radius: 50% 50% 48% 52%/55% 55% 45% 45%;
+        box-shadow:
+          3px 5px 14px rgba(0, 0, 0, 0.12),
+          inset 0 2px 4px rgba(255, 255, 255, 0.8);
+      }
+
+      /* Farmer avatar */
+      .farmer-av {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #8bb8a0, #4a7a60);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        color: #fff;
+        font-weight: 600;
+      }
+      .delivery-av {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #a0a8c0, #5a6080);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Fraunces", serif;
+        font-size: 16px;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      /* ═══════════════════════════
+   SPLASH
+═══════════════════════════ */
+      #v-splash {
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        background: linear-gradient(170deg, var(--moss) 0%, #0f2018 100%);
+        cursor: pointer;
+      }
+      .logo-ring {
+        width: 88px;
+        height: 88px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.12),
+          0 20px 40px -10px rgba(0, 0, 0, 0.5);
+      }
+      .app-name {
+        font-family: "Fraunces", serif;
+        font-size: 30px;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .tagline {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.45);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .loader {
+        display: flex;
+        gap: 6px;
+      }
+      .loader span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+      .loader span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .loader span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes pulse {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.6);
+          background: rgba(255, 255, 255, 0.15);
+        }
+        40% {
+          transform: scale(1);
+          background: rgba(255, 255, 255, 0.8);
+        }
+      }
+      .tap-hint {
+        font-family: "DM Mono", monospace;
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        color: rgba(255, 255, 255, 0.28);
+        text-transform: uppercase;
+        margin-top: 8px;
+      }
+
+      /* ═══════════════════════════
+   AUTH
+═══════════════════════════ */
+      .auth-body {
+        padding: 38px 24px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        flex: 1;
+      }
+      .auth-title {
+        font-family: "Fraunces", serif;
+        font-size: 27px;
+        color: var(--ink);
+        line-height: 1.2;
+      }
+      .auth-sub {
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.55;
+        margin-top: 8px;
+      }
+      .flag-row {
+        display: flex;
+        gap: 10px;
+      }
+      .flag-box {
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 0 13px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .otp-row {
+        display: flex;
+        gap: 10px;
+      }
+      .otp-box {
+        flex: 1;
+        height: 58px;
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        font-size: 22px;
+        font-weight: 700;
+        text-align: center;
+        background: #fff;
+        color: var(--ink);
+        font-family: "Fraunces", serif;
+      }
+      .otp-box.filled {
+        border-color: var(--moss);
+        background: #f3f9f4;
+      }
+      .resend {
+        text-align: center;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .resend span {
+        color: var(--terra);
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* ═══════════════════════════
+   HOME — HEADER
+═══════════════════════════ */
+      .home-hdr {
+        padding: 6px 18px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--white);
+      }
+      .dloc .dlbl {
+        font-size: 9.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .dloc .dval {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 1px;
+      }
+      .hdr-icons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .cart-icon-wrap {
+        position: relative;
+        cursor: pointer;
+      }
+      .cart-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--terra);
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--white);
+        font-family: "DM Mono", monospace;
+      }
+      .notif-wrap {
+        position: relative;
+      }
+      .notif-dot {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--terra);
+        border: 2px solid var(--white);
+      }
+
+      /* ── SEARCH ── */
+      .searchbar {
+        margin: 0 18px 14px;
+        padding: 11px 14px;
+        border-radius: 14px;
+        background: var(--white);
+        border: 1.5px solid var(--line);
+        color: var(--muted);
+        font-size: 13.5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: text;
+        box-shadow: 0 1px 6px -2px rgba(0, 0, 0, 0.07);
+      }
+      .searchbar svg {
+        width: 15px;
+        height: 15px;
+        flex: none;
+      }
+      .sb-mic {
+        margin-left: auto;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #f0f0ec;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .sb-mic svg {
+        width: 13px;
+        height: 13px;
+        color: var(--moss);
+      }
+
+      /* ── WEEK SALE BANNER ── */
+      .promo-wrap {
+        margin: 0 18px 14px;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        height: 138px;
+        cursor: pointer;
+        background: linear-gradient(
+          115deg,
+          #1a3020 0%,
+          #234030 50%,
+          #2e5038 100%
+        );
+      }
+      .promo-bg-circles {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .promo-bg-circles::before {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.03);
+        right: -40px;
+        top: -40px;
+      }
+      .promo-bg-circles::after {
+        content: "";
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+        right: 30px;
+        bottom: -50px;
+      }
+      /* CSS vegetable bowl on right */
+      .promo-veg-scene {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 118px;
+        height: 106px;
+      }
+      .pvs-bowl {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 96px;
+        height: 38px;
+        background: url("https://img.magnific.com/free-photo/mango-still-life_23-2151542114.jpg?w=360")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+        border-radius: 50% 50% 40% 40%;
+        /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);*/
+      }
+      .pvs-tomato {
+        position: absolute;
+        left: 6px;
+        top: 10px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: url("https://img.magnific.com/free-photo/mango-still-life_23-2151542114.jpg?w=360")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+      .pvs-green {
+        position: absolute;
+        left: 32px;
+        top: 2px;
+        width: 44px;
+        height: 52px;
+        background: url("https://images.apollo247.in/pd-cms/cms/2025-05/AdobeStock_299290543.webp?tr=q-80,f-webp,w-400,dpr-2.5,c-at_max%201000w")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+        border-radius: 200%;
+      }
+
+      .pvs-yellow {
+        position: absolute;
+        right: 8px;
+        top: 14px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: url("https://img.magnific.com/free-photo/mango-still-life_23-2151542114.jpg?w=360")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+      .pvs-orange {
+        position: absolute;
+        right: 2px;
+        bottom: 18px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: url("https://img.magnific.com/free-photo/mango-still-life_23-2151542114.jpg?w=360")
+          no-repeat center center;
+        background-size: contain; /* scale image to fit */
+      }
+      .promo-text-box {
+        position: relative;
+        z-index: 2;
+        padding: 20px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .promo-eyebrow {
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--turmeric);
+      }
+      .promo-head {
+        font-family: "Fraunces", serif;
+        font-size: 26px;
+        color: #fff;
+        font-weight: 700;
+        line-height: 1.05;
+      }
+      .promo-sub {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 2px;
+      }
+      .promo-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--white);
+        color: var(--moss);
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 7px 14px;
+        border-radius: 8px;
+        width: fit-content;
+        font-family: "Inter", sans-serif;
+      }
+      .promo-slide-indicator {
+        position: absolute;
+        bottom: 10px;
+        right: 14px;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .promo-dots-row {
+        display: flex;
+        gap: 5px;
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .promo-dots-row span {
+        width: 18px;
+        height: 3px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .promo-dots-row span:first-child {
+        background: var(--white);
+        width: 26px;
+      }
+
+      /* ── TRUST BADGES ── */
+      .trust-row {
+        display: flex;
+        gap: 0;
+        margin: 0 18px 16px;
+        background: var(--white);
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        overflow: hidden;
+        box-shadow: 0 1px 6px -2px rgba(0, 0, 0, 0.06);
+      }
+      .trust-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        padding: 10px 4px;
+        cursor: pointer;
+        position: relative;
+      }
+      .trust-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 20%;
+        height: 60%;
+        width: 1px;
+        background: var(--line);
+      }
+      .trust-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .trust-icon svg {
+        width: 14px;
+        height: 14px;
+      }
+      .trust-label {
+        font-size: 9px;
+        font-weight: 600;
+        color: var(--ink);
+        text-align: center;
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+      }
+
+      /* ── CATEGORY CHIPS ── */
+      .cat-row {
+        display: flex;
+        gap: 10px;
+        padding: 5px 5px 38px;
+        overflow-x: auto;
+      }
+      .cat-row::-webkit-scrollbar {
+        display: none;
+      }
+      .cat-pill {
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+      }
+      .cat-pill-img {
+        width: 62px;
+        height: 62px;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px -3px rgba(0, 0, 0, 0.16);
+        border: 2px solid transparent;
+      }
+      /*.cat-pill.active .cat-pill-img {
+        border-color: var(--moss);
+      }*/
+      .cat-name {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      /* ── CATEGORY PRODUCT ROWS ── */
+      .cat-section {
+        margin-bottom: 4px;
+      }
+      .cat-items-row {
+        display: flex;
+        gap: 10px;
+        padding: 0 18px 16px;
+        overflow-x: auto;
+      }
+      .cat-items-row::-webkit-scrollbar {
+        display: none;
+      }
+      .cat-item-card {
+        flex: none;
+        width: 88px;
+        cursor: pointer;
+      }
+      .cat-item-card:active {
+        opacity: 0.85;
+      }
+      .cat-item-img {
+        width: 88px;
+        height: 78px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--paper);
+        position: relative;
+        box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.12);
+      }
+      .cat-item-img .fc {
+        width: 100%;
+        height: 100%;
+      }
+      .cat-item-name {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-top: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .cat-item-count {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+
+      /* ── PICKED FOR YOU GRID ── */
+      .prod-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 0 18px 24px;
+      }
+      .pcard {
+        background: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        cursor: pointer;
+        box-shadow: 0 2px 10px -4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.14s;
+      }
+      .pcard:active {
+        transform: scale(0.965);
+      }
+      .pcard .pimg {
+        height: 116px;
+        position: relative;
+        overflow: hidden;
+      }
+      .pcard .pimg .fc {
+        width: 100%;
+        height: 100%;
+        transform: scale(1.15);
+      }
+      .pcard .pimg .org {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        font-family: "DM Mono", monospace;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.94);
+        color: var(--good);
+        padding: 3px 7px;
+        border-radius: 6px;
+        z-index: 2;
+      }
+      .pcard .pimg .fav {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.92);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+      }
+      .pbody {
+        padding: 10px 12px 12px;
+      }
+      .pname {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      .pfarmer {
+        font-size: 10px;
+        color: var(--muted);
+        margin-bottom: 7px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .prow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .pprice {
+        font-weight: 700;
+        color: var(--moss);
+        font-size: 14px;
+      }
+      .pprice small {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+      .add-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        background: var(--moss);
+        color: #fff;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* ═══════════════════════════
+   PRODUCT DETAIL
+═══════════════════════════ */
+      .pd-hero {
+        height: 244px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .pd-hero .fc {
+        width: 100%;
+        height: 100%;
+        transform: scale(1.6);
+      }
+      .pd-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.08) 0%,
+          transparent 50%
+        );
+      }
+      .pd-back {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: rgba(255, 255, 255, 0.92) !important;
+        backdrop-filter: blur(6px);
+        z-index: 5;
+      }
+      .pd-fav {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(255, 255, 255, 0.92) !important;
+        backdrop-filter: blur(6px);
+        z-index: 5;
+      }
+      .img-dots {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 5px;
+        z-index: 5;
+      }
+      .img-dots span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+      }
+      .img-dots span:first-child {
+        background: #fff;
+        width: 16px;
+        border-radius: 3px;
+      }
+      .pd-body {
+        padding: 18px 18px 120px;
+      }
+      .pd-name {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        color: var(--ink);
+        font-weight: 700;
+        margin: 10px 0 4px;
+      }
+      .pd-fr-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .favatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex: none;
+      }
+      .fname {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .fstar {
+        font-size: 11px;
+        color: var(--turmeric);
+        font-weight: 700;
+      }
+      .pd-price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .pd-price {
+        font-family: "Fraunces", serif;
+        font-size: 26px;
+        color: var(--terra);
+      }
+      .pd-orig {
+        font-size: 14px;
+        color: var(--muted);
+        text-decoration: line-through;
+      }
+      .pd-off {
+        font-size: 12px;
+        color: var(--good);
+        font-weight: 700;
+        background: var(--good-bg);
+        padding: 2px 7px;
+        border-radius: 6px;
+      }
+      .unit-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .unit-chip {
+        padding: 7px 14px;
+        border-radius: 10px;
+        border: 1.5px solid var(--line);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .unit-chip.active {
+        border-color: var(--moss);
+        color: var(--moss);
+        background: #f0f7f2;
+      }
+      .qty-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+      .qty-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1.5px solid var(--line);
+        background: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .qty-val {
+        font-weight: 700;
+        font-size: 16px;
+        min-width: 24px;
+        text-align: center;
+      }
+      .pd-desc {
+        font-size: 13px;
+        line-height: 1.65;
+        color: #5a5542;
+      }
+      .pd-rule {
+        height: 1px;
+        background: var(--line);
+        margin: 16px 0;
+      }
+      .pd-freshness {
+        display: flex;
+        gap: 10px;
+      }
+      .fi {
+        flex: 1;
+        background: var(--paper);
+        border-radius: 12px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+      .fi-val {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--ink);
+      }
+      .fi-lbl {
+        font-size: 9.5px;
+        color: var(--muted);
+        text-align: center;
+      }
+      .pd-sticky {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 14px 18px 28px;
+        background: linear-gradient(0deg, var(--cream) 72%, transparent);
+      }
+
+      /* ═══════════════════════════
+   CART
+═══════════════════════════ */
+      .topbar {
+        padding: 8px 18px 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+        background: var(--white);
+      }
+      .topbar .ttitle {
+        font-family: "Fraunces", serif;
+        font-size: 20px;
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .ci-row {
+        display: flex;
+        gap: 12px;
+        padding: 14px 18px;
+        align-items: center;
+      }
+      .ci-img {
+        width: 58px;
+        height: 58px;
+        border-radius: 12px;
+        overflow: hidden;
+        flex: none;
+      }
+      .ci-img .fc {
+        width: 100%;
+        height: 100%;
+      }
+      .ci-info {
+        flex: 1;
+      }
+      .ci-name {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      .ci-meta {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .ci-price {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--moss);
+        margin-top: 4px;
+      }
+      .ci-stepper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .cs-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        border: 1.5px solid var(--line);
+        background: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cs-val {
+        font-size: 13px;
+        font-weight: 700;
+        min-width: 20px;
+        text-align: center;
+      }
+      .coupon-row {
+        margin: 8px 18px;
+        padding: 13px 15px;
+        border: 1.5px dashed var(--good);
+        border-radius: 14px;
+        background: var(--good-bg);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+      }
+      .coupon-row svg {
+        width: 17px;
+        height: 17px;
+        color: var(--good);
+        flex: none;
+      }
+      .c-text {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--good);
+      }
+      .c-sub {
+        font-size: 10px;
+        color: #5a8a68;
+      }
+      .order-note {
+        margin: 0 18px 12px;
+        padding: 10px 13px;
+        background: var(--paper);
+        border-radius: 11px;
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .order-note svg {
+        width: 13px;
+        height: 13px;
+        flex: none;
+        margin-top: 1px;
+      }
+      .summary-card {
+        margin: 0 18px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+      }
+      .sum-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        padding: 5px 0;
+        color: #5a5542;
+      }
+      .sum-row.total {
+        font-weight: 700;
+        color: var(--ink);
+        font-size: 15px;
+        border-top: 1px dashed var(--line);
+        margin-top: 8px;
+        padding-top: 12px;
+      }
+      .disc {
+        color: var(--good);
+      }
+      .cart-foot {
+        padding: 13px 18px 26px;
+        flex-shrink: 0;
+      }
+
+      /* ═══════════════════════════
+   CHECKOUT
+═══════════════════════════ */
+      .sec-block {
+        padding: 16px 18px 0;
+      }
+      .blk-title {
+        font-family: "Fraunces", serif;
+        font-size: 15px;
+        color: var(--ink);
+        margin-bottom: 12px;
+        font-weight: 600;
+      }
+      .addr-card {
+        padding: 14px 15px;
+        background: #fff;
+        border: 1.5px solid var(--line);
+        border-radius: 14px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+      .addr-card.sel {
+        border-color: var(--moss);
+        background: #f4faf5;
+      }
+      .addr-tag {
+        font-family: "DM Mono", monospace;
+        font-size: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background: var(--moss);
+        color: #fff;
+        padding: 3px 8px;
+        border-radius: 5px;
+        flex: none;
+        margin-top: 1px;
+      }
+      .addr-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      .addr-text {
+        font-size: 12.5px;
+        color: #5a5542;
+        line-height: 1.55;
+      }
+      .slot-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .slot-chip {
+        padding: 10px 12px;
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        cursor: pointer;
+      }
+      .slot-chip.sel {
+        border-color: var(--moss);
+        background: #f0f7f2;
+      }
+      .slot-date {
+        font-size: 9.5px;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .slot-time {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-top: 2px;
+      }
+      .slot-chip.sel .slot-time {
+        color: var(--moss);
+      }
+      .pay-opt {
+        margin-bottom: 8px;
+        padding: 13px 15px;
+        border: 1.5px solid var(--line);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        cursor: pointer;
+      }
+      .pay-opt.sel {
+        border-color: var(--moss);
+        background: #f4faf5;
+      }
+      .pay-radio {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid var(--line);
+        flex: none;
+      }
+      .pay-opt.sel .pay-radio {
+        border-color: var(--moss);
+        border-width: 5px;
+      }
+      .pay-label {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .pay-sub {
+        font-size: 10.5px;
+        color: var(--muted);
+      }
+      .pay-icon {
+        margin-left: auto;
+        width: 34px;
+        height: 22px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .pi-upi {
+        background: #ebf5ec;
+        color: var(--good);
+      }
+      .pi-card {
+        background: #eef0f8;
+        color: #4050a0;
+      }
+      .pi-cod {
+        background: #fef3e2;
+        color: var(--warn);
+      }
+
+      /* ═══════════════════════════
+   SUCCESS
+═══════════════════════════ */
+      #v-success {
+        background: var(--cream);
+      }
+      .success-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        text-align: center;
+        padding: 32px;
+      }
+      .success-ring {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: var(--good-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        box-shadow: 0 0 0 14px rgba(46, 112, 72, 0.07);
+      }
+      .success-ring svg {
+        width: 46px;
+        height: 46px;
+        color: var(--good);
+      }
+      .success-title {
+        font-family: "Fraunces", serif;
+        font-size: 26px;
+        color: var(--ink);
+      }
+      .success-sub {
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.6;
+        max-width: 280px;
+      }
+      .success-pill {
+        background: var(--paper);
+        border-radius: 14px;
+        padding: 14px 20px;
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        justify-content: center;
+      }
+      .sp {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+      .sp-val {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--ink);
+      }
+      .sp-lbl {
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* ═══════════════════════════
+   TRACKING
+═══════════════════════════ */
+      .track-hdr {
+        padding: 12px 18px 14px;
+      }
+      .oid-lbl {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .track-eta {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        color: var(--ink);
+      }
+      .track-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .map-card {
+        margin: 0 18px 14px;
+        height: 152px;
+        border-radius: 18px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--line);
+        background: #e8e4d5;
+      }
+      .map-card svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .partner-card {
+        margin: 0 18px 14px;
+        padding: 14px 15px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 2px 10px -4px rgba(0, 0, 0, 0.08);
+      }
+      .p-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex: none;
+      }
+      .p-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .p-meta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .p-acts {
+        display: flex;
+        gap: 8px;
+        margin-left: auto;
+      }
+      .p-act {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1.5px solid var(--line);
+        background: var(--paper);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .p-act svg {
+        width: 16px;
+        height: 16px;
+        color: var(--moss);
+      }
+      .track-steps {
+        padding: 4px 18px 20px;
+      }
+      .tstep {
+        display: flex;
+        gap: 12px;
+      }
+      .tstep-l {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 30px;
+        flex: none;
+      }
+      .tstep-node {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .tstep-node svg {
+        width: 13px;
+        height: 13px;
+      }
+      .tstep-node.done {
+        background: var(--moss);
+        color: #fff;
+      }
+      .tstep-node.now {
+        background: var(--warn-bg);
+        border: 2px solid var(--turmeric);
+        color: var(--warn);
+      }
+      .tstep-node.todo {
+        background: var(--paper);
+        border: 1.5px solid var(--line);
+        color: var(--muted);
+      }
+      .tstep-line {
+        flex: 1;
+        width: 2px;
+        background: var(--line);
+        margin: 3px auto;
+        min-height: 22px;
+      }
+      .tstep-line.done {
+        background: var(--moss);
+      }
+      .tstep-c {
+        flex: 1;
+        padding-bottom: 16px;
+      }
+      .tstep-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .tstep-title.dim {
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .tstep-title.amber {
+        color: var(--warn);
+      }
+      .tstep-sub {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      /* ═══════════════════════════
+   PROFILE
+═══════════════════════════ */
+      .prof-hero {
+        padding: 22px 18px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .prof-av {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--moss);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Fraunces", serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff;
+        flex: none;
+      }
+      .prof-name {
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        color: var(--ink);
+      }
+      .prof-ph {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .prof-stats {
+        margin: 0 18px 16px;
+        display: flex;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .pstat {
+        /*flex: 1;*/
+        padding: 14px 10px;
+        display: ruby;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+      .pstat:not(:last-child) {
+        border-right: 1px solid var(--line);
+      }
+      .ps-val {
+        font-family: "Fraunces", serif;
+        font-size: 20px;
+        color: var(--ink);
+      }
+      .ps-lbl {
+        font-size: 9.5px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+      }
+      .menu-sec {
+        padding: 0 18px 6px;
+      }
+      .menu-lbl {
+        font-size: 9.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .menu-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        overflow: hidden;
+        margin-bottom: 12px;
+      }
+      .mitem {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 15px;
+        cursor: pointer;
+      }
+      .mitem:not(:last-child) {
+        border-bottom: 1px solid var(--line);
+      }
+      .mitem:active {
+        background: var(--paper);
+      }
+      .micon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .micon svg {
+        width: 16px;
+        height: 16px;
+      }
+      .mtext {
+        flex: 1;
+      }
+      .mtitle {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .msub {
+        font-size: 10.5px;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+      .mright {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .mbadge {
+        background: var(--terra);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+      }
+      .mchev svg {
+        width: 13px;
+        height: 13px;
+        color: var(--muted);
+      }
+      .wallet-pill {
+        background: var(--good-bg);
+        color: var(--good);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 7px;
+      }
+
+      /* ════════════════════════════════════════
+   ROLE SELECTION SCREEN
+════════════════════════════════════════ */
+      #v-role-select {
+        background: linear-gradient(
+          170deg,
+          #0f2018 0%,
+          #1e3a28 60%,
+          #2a5030 100%
+        );
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 0;
+      }
+      .role-header {
+        text-align: center;
+        padding: 0 28px 32px;
+      }
+      .role-logo {
+        width: 64px;
+        height: 64px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+      }
+      .role-logo svg {
+        width: 32px;
+        height: 32px;
+      }
+      .role-headline {
+        font-family: "Fraunces", serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }
+      .role-sub {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        font-family: "DM Mono", monospace;
+        letter-spacing: 0.04em;
+      }
+      .role-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 24px;
+        width: 100%;
+      }
+      .role-card {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .role-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.04),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .role-card:hover::before,
+      .role-card:active::before {
+        opacity: 1;
+      }
+      .role-card.selected {
+        border-color: var(--turmeric);
+        background: rgba(224, 154, 48, 0.12);
+      }
+      .role-card:active {
+        transform: scale(0.97);
+      }
+      .role-card-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .role-card-icon svg {
+        width: 26px;
+        height: 26px;
+      }
+      .role-card-body {
+        flex: 1;
+      }
+      .role-card-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 3px;
+      }
+      .role-card-desc {
+        font-size: 11.5px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .role-card-arrow {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .role-card-arrow svg {
+        width: 13px;
+        height: 13px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .role-card.selected .role-card-arrow {
+        background: var(--turmeric);
+      }
+      .role-card.selected .role-card-arrow svg {
+        color: #fff;
+      }
+      .role-footer {
+        padding: 24px 24px 32px;
+        width: 100%;
+      }
+      .role-selected-badge {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        background: rgba(224, 154, 48, 0.15);
+        border: 1px solid rgba(224, 154, 48, 0.3);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: var(--turmeric);
+        font-weight: 600;
+        font-family: "DM Mono", monospace;
+      }
+      .role-selected-badge.show {
+        display: flex;
+      }
+      .role-selected-badge svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* ════════════════════════════════════════
+   FARMER DASHBOARD
+════════════════════════════════════════ */
+      #v-farmer {
+        background: var(--cream);
+      }
+      .farmer-hdr {
+        background: linear-gradient(135deg, #1e3a28, #2a5030);
+        padding: 54px 20px 28px;
+        flex-shrink: 0;
+      }
+      .farmer-hdr-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .farmer-hdr-greet {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 4px;
+      }
+      .farmer-hdr-name {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .farmer-hdr-av {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Fraunces", serif;
+        font-size: 17px;
+        color: #fff;
+        font-weight: 700;
+        flex: none;
+      }
+      .farmer-stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+      .farmer-stat {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        padding: 14px 12px;
+        text-align: center;
+      }
+      .farmer-stat-val {
+        font-family: "Fraunces", serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .farmer-stat-lbl {
+        font-size: 9.5px;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 2px;
+        font-weight: 600;
+      }
+      .farmer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 18px 24px;
+      }
+      .farmer-body::-webkit-scrollbar {
+        display: none;
+      }
+      .f-section-title {
+        font-family: "Fraunces", serif;
+        font-size: 16px;
+        color: var(--ink);
+        margin-bottom: 12px;
+      }
+      .order-req-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.08);
+      }
+      .orc-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .orc-id {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .orc-badge {
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 20px;
+        font-family: "DM Mono", monospace;
+        letter-spacing: 0.04em;
+      }
+      .orc-badge.new {
+        background: #ebf5ee;
+        color: var(--good);
+      }
+      .orc-badge.prep {
+        background: var(--warn-bg);
+        color: var(--warn);
+      }
+      .orc-items {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      .orc-meta {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .orc-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .orc-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+      }
+      .orc-btn.accept {
+        background: var(--good);
+        color: #fff;
+      }
+      .orc-btn.reject {
+        background: var(--paper);
+        color: var(--muted);
+        border: 1px solid var(--line);
+      }
+      .orc-btn.dispatch {
+        background: var(--moss);
+        color: #fff;
+      }
+      .prod-quick-row {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        margin-bottom: 20px;
+      }
+      .prod-quick-row::-webkit-scrollbar {
+        display: none;
+      }
+      .pq-card {
+        flex: none;
+        width: 110px;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        padding: 10px;
+        box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.08);
+      }
+      .pq-img {
+        width: 100%;
+        height: 72px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 8px;
+        position: relative;
+      }
+      .pq-img .fc {
+        width: 100%;
+        height: 100%;
+      }
+      .pq-img .real-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .pq-name {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 3px;
+      }
+      .pq-stock {
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .pq-price {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--moss);
+        margin-top: 4px;
+      }
+      .farmer-bnav {
+        flex: none;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px 0 20px;
+        border-top: 1px solid var(--line);
+        background: var(--white);
+      }
+      .fni {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-size: 9px;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        padding: 4px 8px;
+      }
+      .fni svg {
+        width: 22px;
+        height: 22px;
+      }
+      .fni.on {
+        color: var(--moss);
+      }
+      .fni .dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--moss);
+        display: none;
+      }
+      .fni.on .dot {
+        display: block;
+      }
+
+      /* ════════════════════════════════════════
+   DELIVERY DASHBOARD
+════════════════════════════════════════ */
+      #v-delivery {
+        background: var(--cream);
+      }
+      .del-hdr {
+        background: linear-gradient(135deg, #1a2838, #243850);
+        padding: 54px 20px 28px;
+        flex-shrink: 0;
+      }
+      .del-hdr-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+      .del-hdr-greet {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 4px;
+      }
+      .del-hdr-name {
+        font-family: "Fraunces", serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .del-hdr-av {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Fraunces", serif;
+        font-size: 17px;
+        color: #fff;
+        font-weight: 700;
+        flex: none;
+      }
+      .del-toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 12px 16px;
+      }
+      .del-toggle-label {
+        font-size: 13px;
+        color: #fff;
+        font-weight: 600;
+      }
+      .del-toggle-sub {
+        font-size: 10.5px;
+        color: rgba(255, 255, 255, 0.45);
+        margin-top: 2px;
+      }
+      .toggle-switch {
+        width: 48px;
+        height: 26px;
+        border-radius: 13px;
+        background: var(--good);
+        position: relative;
+        cursor: pointer;
+        transition: background 0.2s;
+        flex: none;
+      }
+      .toggle-switch::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        top: 3px;
+        left: 25px;
+        transition: left 0.2s;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      }
+      .toggle-switch.off {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .toggle-switch.off::after {
+        left: 3px;
+      }
+      .del-stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .del-stat {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        padding: 12px 14px;
+      }
+      .del-stat-val {
+        font-family: "Fraunces", serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .del-stat-lbl {
+        font-size: 9.5px;
+        color: rgba(255, 255, 255, 0.45);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 2px;
+        font-weight: 600;
+      }
+      .del-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 18px 24px;
+      }
+      .del-body::-webkit-scrollbar {
+        display: none;
+      }
+      .assigned-card {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        overflow: hidden;
+        margin-bottom: 14px;
+        box-shadow: 0 3px 12px -4px rgba(0, 0, 0, 0.1);
+      }
+      .ac-header {
+        background: linear-gradient(90deg, #1a2838, #243850);
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .ac-order-id {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .ac-badge {
+        font-family: "DM Mono", monospace;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 20px;
+        letter-spacing: 0.04em;
+      }
+      .ac-badge.pickup {
+        background: var(--warn-bg);
+        color: var(--warn);
+      }
+      .ac-badge.delivering {
+        background: var(--good-bg);
+        color: var(--good);
+      }
+      .ac-body {
+        padding: 14px 16px;
+      }
+      .ac-route {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .ac-route-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex: none;
+      }
+      .ac-route-line {
+        width: 2px;
+        height: 28px;
+        background: var(--line);
+        margin: 2px auto;
+        flex: none;
+      }
+      .ac-route-info {
+        font-size: 12.5px;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .ac-route-sub {
+        font-size: 10.5px;
+        color: var(--muted);
+      }
+      .ac-route-col {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .ac-amount {
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--moss);
+        margin-bottom: 4px;
+      }
+      .ac-meta {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .ac-actions {
+        display: flex;
+        gap: 8px;
+        padding: 0 16px 14px;
+      }
+      .ac-btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 12.5px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+      }
+      .ac-btn.nav {
+        background: #1a2838;
+        color: #fff;
+      }
+      .ac-btn.confirm {
+        background: var(--good);
+        color: #fff;
+      }
+      .del-bnav {
+        flex: none;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px 0 20px;
+        border-top: 1px solid var(--line);
+        background: var(--white);
+      }
+      .dni {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-size: 9px;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        padding: 4px 8px;
+      }
+      .dni svg {
+        width: 22px;
+        height: 22px;
+      }
+      .dni.on {
+        color: #243850;
+      }
+      .dni .dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #243850;
+        display: none;
+      }
+      .dni.on .dot {
+        display: block;
+      }
+
+      /* login role pill */
+      .login-role-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-family: "DM Mono", monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 4px;
+      }
+      .login-role-pill .role-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--turmeric);
+      }
+
+      /* OTP screen role pill */
+      .otp-role-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--good-bg);
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--good);
+        margin-bottom: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone">
+      <div class="screen">
+        <!-- ═══ SPLASH ═══ -->
+        <div class="view active" id="v-splash" onclick="go('v-login')">
+          <svg
+            viewBox="0 0 393 200"
+            style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              opacity: 0.05;
+            "
+          >
+            <circle cx="80" cy="80" r="130" fill="#fff" />
+            <circle cx="340" cy="200" r="100" fill="#fff" />
+          </svg>
+          <div class="logo-ring">
+            <svg viewBox="0 0 44 44" fill="none">
+              <path
+                d="M22 4C14 8 8 16 8 26c0 2 .3 4 .8 5.8C13 33.3 17.3 34 22 34s9-.7 13.2-2.2C35.7 30 36 28 36 26c0-10-6-18-14-22Z"
+                fill="#E09A30"
+              />
+              <path
+                d="M22 34C10 34 4 40 4 40h36s-6-6-18-6Z"
+                fill="rgba(255,255,255,.12)"
+              />
+              <path
+                d="M22 10 Q20 20 14 28"
+                stroke="rgba(255,255,255,.3)"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="app-name">Farm Market</div>
+          <div class="tagline">Farm to door &middot; Daily fresh</div>
+          <div class="loader" style="margin-top: 6px">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="tap-hint">Tap to continue</div>
+        </div>
+
+        <!-- ═══ LOGIN ═══ -->
+        <div class="view" id="v-login">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span id="sysTime" style="z-index: 2"></span>
+            <div class="sb-r">
+              <svg
+                viewBox="0 0 18 12"
+                width="18"
+                height="12"
+                fill="currentColor"
+              >
+                <rect x="0" y="3" width="3" height="9" rx="1" />
+                <rect x="4" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="0" width="3" height="12" rx="1" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-body">
+            <div>
+              <div class="auth-title">Fresh from the<br />farm, daily.</div>
+              <div class="auth-sub">
+                Enter your mobile number to get started.
+              </div>
+            </div>
+            <div>
+              <div class="lbl">Mobile Number</div>
+              <div class="flag-row">
+                <div class="flag-box">&#127470;&#127475; +91</div>
+                <input
+                  class="inp"
+                  type="tel"
+                  value="98765 43210"
+                  style="flex: 1"
+                />
+              </div>
+            </div>
+            <button class="btn btn-moss" onclick="go('v-otp')">Send OTP</button>
+            <div
+              style="text-align: center; font-size: 12px; color: var(--muted)"
+            >
+              By continuing you agree to our
+              <span style="color: var(--moss); font-weight: 600">Terms</span>
+              &amp;
+              <span style="color: var(--moss); font-weight: 600">Privacy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ OTP ═══ -->
+        <div class="view" id="v-otp">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r"></div>
+          </div>
+          <div class="topbar">
+            <div class="ibtn" onclick="go('v-login')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-body" style="padding-top: 8px">
+            <div>
+              <div class="auth-title">Verify your<br />number</div>
+              <div class="auth-sub">
+                Code sent to <strong>+91 98765 43210</strong>
+              </div>
+            </div>
+            <div>
+              <div class="lbl">Enter 4-digit OTP</div>
+              <div class="otp-row">
+                <input class="otp-box filled" maxlength="1" value="4" /><input
+                  class="otp-box filled"
+                  maxlength="1"
+                  value="2"
+                /><input class="otp-box filled" maxlength="1" value="9" /><input
+                  class="otp-box"
+                  maxlength="1"
+                  placeholder="&middot;"
+                />
+              </div>
+            </div>
+            <button class="btn btn-moss" onclick="go('v-home')">
+              Verify &amp; Continue
+            </button>
+            <div class="resend">
+              Didn't receive it? &nbsp;<span onclick="toast('OTP resent!')"
+                >Resend in 0:28</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════
+     HOME SCREEN — Enhanced
+═══════════════════════════════ -->
+        <div class="view" id="v-home">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r">
+              <svg
+                viewBox="0 0 18 12"
+                width="18"
+                height="12"
+                fill="currentColor"
+              >
+                <rect x="0" y="3" width="3" height="9" rx="1" />
+                <rect x="4" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="0" width="3" height="12" rx="1" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- HEADER -->
+          <div class="home-hdr">
+            <div class="dloc">
+              <div class="dlbl">Deliver to</div>
+              <div class="dval">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="11"
+                  height="11"
+                  fill="var(--terra)"
+                >
+                  <path
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                  />
+                </svg>
+                Indiranagar, Bengaluru &#9662;
+              </div>
+            </div>
+            <div class="hdr-icons">
+              <div
+                class="ibtn notif-wrap"
+                onclick="toast('No new notifications')"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="17"
+                  height="17"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"
+                  />
+                </svg>
+                <div class="notif-dot"></div>
+              </div>
+              <div class="cart-icon-wrap ibtn" onclick="go('v-cart')">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="17"
+                  height="17"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path
+                    d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.91-1.39L23 6H6"
+                  />
+                </svg>
+                <div class="cart-badge">3</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEARCH BAR -->
+          <div class="searchbar" onclick="toast('Search coming soon')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+            Search tomatoes, mangoes, millet&#8230;
+            <div class="sb-mic">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- WEEK SALE BANNER -->
+          <div
+            class="promo-wrap"
+            onclick="toast('Week Sale — Up to 40% OFF applied!')"
+          >
+            <div class="promo-bg-circles"></div>
+            <div class="promo-text-box">
+              <div class="promo-eyebrow">This week only</div>
+              <div class="promo-head">WEEK<br />SALE</div>
+              <div class="promo-sub">Fresh Picks, Great Prices!</div>
+              <div class="promo-cta">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="12"
+                  height="12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+                Up to 40% OFF
+              </div>
+            </div>
+            <!-- CSS veggie scene -->
+            <div class="promo-veg-scene">
+              <div class="pvs-green"></div>
+              <div class="pvs-tomato"></div>
+              <div class="pvs-yellow"></div>
+              <div class="pvs-orange"></div>
+              <div class="pvs-bowl"></div>
+            </div>
+            <div class="promo-slide-indicator">1 / 4</div>
+            <div class="promo-dots-row">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <!-- TRUST BADGES -->
+          <div class="trust-row">
+            <div class="trust-item">
+              <div class="trust-icon" style="background: #ebf5ee">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--good)"
+                  stroke-width="2.5"
+                >
+                  <path
+                    d="M12 2L3 7v5c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"
+                  />
+                  <polyline
+                    points="9 12 11 14 15 10"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="trust-label">Farm<br />Fresh</div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon" style="background: #ebf5ee">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--good)"
+                  stroke-width="2.5"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path
+                    d="M8 12l3 3 5-5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="trust-label">Pesticide<br />Free</div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon" style="background: #fef9ec">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--turmeric)"
+                  stroke-width="2.5"
+                >
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="trust-label">Best<br />Prices</div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon" style="background: #fef3ea">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--terra)"
+                  stroke-width="2.5"
+                >
+                  <path
+                    d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"
+                  />
+                  <rect x="9" y="11" width="14" height="10" rx="2" />
+                  <circle cx="12" cy="16" r="1" fill="var(--terra)" />
+                  <circle cx="20" cy="16" r="1" fill="var(--terra)" />
+                </svg>
+              </div>
+              <div class="trust-label">Fast<br />Delivery</div>
+            </div>
+          </div>
+
+          <!-- CATEGORIES STRIP -->
+          <div class="sec-hd">
+            <span class="sec-title">Categories</span
+            ><span class="sec-link" onclick="go('v-categories')"
+              >See all &rarr;</span
+            >
+          </div>
+          <div class="cat-row">
+            <div class="cat-pill active" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-tomato"></div></div>
+              <span class="cat-name">Vegetables</span>
+            </div>
+            <div class="cat-pill" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-mango"></div></div>
+              <span class="cat-name">Fruits</span>
+            </div>
+            <div class="cat-pill" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-spinach"></div></div>
+              <span class="cat-name">Leafy</span>
+            </div>
+            <div class="cat-pill" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-millet"></div></div>
+              <span class="cat-name">Grains</span>
+            </div>
+            <div class="cat-pill" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-dairy"></div></div>
+              <span class="cat-name">Dairy</span>
+            </div>
+            <div class="cat-pill" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-spices"></div></div>
+              <span class="cat-name">Spices</span>
+            </div>
+            <div class="cat-pill" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-pulses"></div></div>
+              <span class="cat-name">Pulses</span>
+            </div>
+            <div class="cat-pill" onclick="go('v-categories')">
+              <div class="cat-pill-img"><div class="fc fc-eggs"></div></div>
+              <span class="cat-name">Eggs</span>
+            </div>
+          </div>
+
+          <!-- VEGETABLES ROW -->
+          <div class="cat-section">
+            <div class="sec-hd">
+              <span class="sec-title">Vegetables</span
+              ><span class="sec-link" onclick="go('v-categories')"
+                >See all &rarr;</span
+              >
+            </div>
+            <div class="cat-items-row">
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-tomato"></div></div>
+                <div class="cat-item-name">Tomato</div>
+                <div class="cat-item-count">25+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-potato"></div></div>
+                <div class="cat-item-name">Potato</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-onion"></div></div>
+                <div class="cat-item-name">Onion</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img">
+                  <div class="fc fc-brinjal"></div>
+                </div>
+                <div class="cat-item-name">Brinjal</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img">
+                  <div class="fc fc-cucumber"></div>
+                </div>
+                <div class="cat-item-name">Cucumber</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img">
+                  <div class="fc fc-capsicum"></div>
+                </div>
+                <div class="cat-item-name">Capsicum</div>
+                <div class="cat-item-count">15+ items</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FRUITS ROW -->
+          <div class="cat-section">
+            <div class="sec-hd">
+              <span class="sec-title">Fruits</span
+              ><span class="sec-link" onclick="go('v-categories')"
+                >See all &rarr;</span
+              >
+            </div>
+            <div class="cat-items-row">
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-banana"></div></div>
+                <div class="cat-item-name">Banana</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-apple"></div></div>
+                <div class="cat-item-name">Apple</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-mango"></div></div>
+                <div class="cat-item-name">Mango</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-orange"></div></div>
+                <div class="cat-item-name">Orange</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-grapes"></div></div>
+                <div class="cat-item-name">Grapes</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-papaya"></div></div>
+                <div class="cat-item-name">Papaya</div>
+                <div class="cat-item-count">15+ items</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LEAFY GREENS ROW -->
+          <div class="cat-section">
+            <div class="sec-hd">
+              <span class="sec-title">Leafy Greens</span
+              ><span class="sec-link" onclick="go('v-categories')"
+                >See all &rarr;</span
+              >
+            </div>
+            <div class="cat-items-row">
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img">
+                  <div class="fc fc-spinach"></div>
+                </div>
+                <div class="cat-item-name">Spinach</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img">
+                  <div class="fc fc-fenugreek"></div>
+                </div>
+                <div class="cat-item-name">Fenugreek</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img">
+                  <div class="fc fc-coriander"></div>
+                </div>
+                <div class="cat-item-name">Coriander</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-mint"></div></div>
+                <div class="cat-item-name">Mint</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img">
+                  <div class="fc fc-curryleaves"></div>
+                </div>
+                <div class="cat-item-name">Curry Leaves</div>
+                <div class="cat-item-count">15+ items</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GRAINS ROW -->
+          <div class="cat-section">
+            <div class="sec-hd">
+              <span class="sec-title">Grains</span
+              ><span class="sec-link" onclick="go('v-categories')"
+                >See all &rarr;</span
+              >
+            </div>
+            <div class="cat-items-row">
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-rice"></div></div>
+                <div class="cat-item-name">Rice</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-wheat"></div></div>
+                <div class="cat-item-name">Wheat</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-millet"></div></div>
+                <div class="cat-item-name">Millets</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-oats"></div></div>
+                <div class="cat-item-name">Oats</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-quinoa"></div></div>
+                <div class="cat-item-name">Quinoa</div>
+                <div class="cat-item-count">20+ items</div>
+              </div>
+              <div class="cat-item-card" onclick="go('v-product')">
+                <div class="cat-item-img"><div class="fc fc-barley"></div></div>
+                <div class="cat-item-name">Barley</div>
+                <div class="cat-item-count">15+ items</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PICKED FOR YOU -->
+          <div class="sec-hd">
+            <span class="sec-title">Picked for you</span
+            ><span class="sec-link" onclick="go('v-categories')"
+              >See all &rarr;</span
+            >
+          </div>
+          <div class="prod-grid">
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg">
+                <div class="fc fc-tomato"></div>
+                <span class="org">ORGANIC</span
+                ><span class="fav"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                    fill="none"
+                    stroke="#C03030"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                    /></svg
+                ></span>
+              </div>
+              <div class="pbody">
+                <div class="pname">Vine Tomatoes</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.8
+                  &middot; Ravi's Farm, Kolar
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;42 <small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added to cart ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg">
+                <div class="fc fc-spinach"></div>
+                <span class="org">ORGANIC</span
+                ><span class="fav"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                    fill="none"
+                    stroke="#C03030"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                    /></svg
+                ></span>
+              </div>
+              <div class="pbody">
+                <div class="pname">Baby Spinach</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.7
+                  &middot; Lakshmi Greens
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;28 <small>/bun</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added to cart ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg">
+                <div class="fc fc-mango"></div>
+                <span class="org">ORGANIC</span
+                ><span class="fav"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                    fill="none"
+                    stroke="#C03030"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                    /></svg
+                ></span>
+              </div>
+              <div class="pbody">
+                <div class="pname">Alphonso Mango</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.9
+                  &middot; Konkan Orchards
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;110 <small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added to cart ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg">
+                <div class="fc fc-millet"></div>
+                <span class="org">ORGANIC</span
+                ><span class="fav"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                    fill="none"
+                    stroke="#C03030"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                    /></svg
+                ></span>
+              </div>
+              <div class="pbody">
+                <div class="pname">Foxtail Millet</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.6
+                  &middot; Deccan Organics
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;65 <small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added to cart ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bnav">
+            <div class="ni on" onclick="go('v-home')">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg
+              >Home
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-categories')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" /></svg
+              >Categories
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-cart')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.91-1.39L23 6H6"
+                /></svg
+              >Cart
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-tracking')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                />
+                <rect x="9" y="3" width="6" height="4" rx="1" />
+                <path d="M9 12h6M9 16h4" /></svg
+              >Orders
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-profile')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+              >Profile
+              <div class="dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ CATEGORIES ═══ -->
+        <div class="view" id="v-categories">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r"></div>
+          </div>
+          <div class="topbar">
+            <div class="ibtn" onclick="go('v-home')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </div>
+            <span class="ttitle">Vegetables</span>
+            <div class="ibtn" style="margin-left: auto">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+              </svg>
+            </div>
+          </div>
+          <div class="searchbar" style="margin: 0 18px 14px">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" /></svg
+            >Search in vegetables&#8230;
+          </div>
+          <div class="sec-hd">
+            <span class="sec-title">32 products</span
+            ><span class="sec-link">Sort &#8597;</span>
+          </div>
+          <div class="prod-grid">
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg">
+                <div class="fc fc-tomato"></div>
+                <span class="org">ORGANIC</span>
+              </div>
+              <div class="pbody">
+                <div class="pname">Vine Tomatoes</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.8
+                  &middot; Ravi's Farm
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;42<small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg"><div class="fc fc-potato"></div></div>
+              <div class="pbody">
+                <div class="pname">Potatoes</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.5
+                  &middot; Hosur Fields
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;30<small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg"><div class="fc fc-onion"></div></div>
+              <div class="pbody">
+                <div class="pname">Red Onions</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.6
+                  &middot; Belgaum Co-op
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;35<small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg">
+                <div class="fc fc-brinjal"></div>
+                <span class="org">ORGANIC</span>
+              </div>
+              <div class="pbody">
+                <div class="pname">Brinjal</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.7
+                  &middot; Hill Organics
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;45<small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg"><div class="fc fc-cucumber"></div></div>
+              <div class="pbody">
+                <div class="pname">Cucumber</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.5
+                  &middot; Green Farms
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;25<small>/pc</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pcard" onclick="go('v-product')">
+              <div class="pimg"><div class="fc fc-capsicum"></div></div>
+              <div class="pbody">
+                <div class="pname">Capsicum</div>
+                <div class="pfarmer">
+                  <span style="color: var(--turmeric)">&#9733;</span> 4.4
+                  &middot; Ooty Farms
+                </div>
+                <div class="prow">
+                  <span class="pprice">&#8377;60<small>/kg</small></span
+                  ><button
+                    class="add-btn"
+                    onclick="
+                      event.stopPropagation();
+                      toast('Added ✓');
+                    "
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="ni" onclick="go('v-home')">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg
+              >Home
+              <div class="dot"></div>
+            </div>
+            <div class="ni on" onclick="go('v-categories')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" /></svg
+              >Categories
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-cart')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.91-1.39L23 6H6"
+                /></svg
+              >Cart
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-tracking')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                />
+                <rect x="9" y="3" width="6" height="4" rx="1" /></svg
+              >Orders
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-profile')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+              >Profile
+              <div class="dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ PRODUCT DETAIL ═══ -->
+        <div class="view" id="v-product">
+          <div class="pd-hero">
+            <div class="fc fc-tomato" style="transform: scale(1.6)"></div>
+            <div class="pd-overlay"></div>
+            <div class="ibtn pd-back" onclick="go('v-categories')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </div>
+            <div class="ibtn pd-fav" onclick="toast('Saved to wishlist')">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="#C03030"
+                stroke-width="2"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                />
+              </svg>
+            </div>
+            <div class="img-dots"><span></span><span></span><span></span></div>
+          </div>
+          <div class="pd-body">
+            <span class="badge green"
+              ><span class="led"></span>Verified Organic</span
+            >
+            <div class="pd-name">Vine Tomatoes</div>
+            <div class="pd-fr-row">
+              <div class="favatar"><div class="farmer-av">R</div></div>
+              <span class="fname">Ravi Shankar &middot; Kolar, Karnataka</span>
+              <span class="fstar">&#9733; 4.8</span>
+            </div>
+            <div class="pd-price-row">
+              <span class="pd-price">&#8377;42</span
+              ><span class="pd-orig">&#8377;52</span
+              ><span class="pd-off">19% off</span>
+            </div>
+            <div class="unit-row">
+              <div class="unit-chip active">500 g</div>
+              <div class="unit-chip" onclick="toast('Unit changed')">1 kg</div>
+              <div class="unit-chip" onclick="toast('Unit changed')">2 kg</div>
+            </div>
+            <div class="qty-row">
+              <button class="qty-btn" onclick="changeQty(-1)">&#8722;</button
+              ><span class="qty-val" id="qtyval">1</span
+              ><button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            <div class="pd-desc">
+              Hand-picked vine-ripened tomatoes harvested within 24 hours of
+              dispatch. Grown without synthetic pesticides on Ravi's 4-acre farm
+              in Kolar, Karnataka. Certified by APEDA.
+            </div>
+            <div class="pd-rule"></div>
+            <div class="pd-freshness">
+              <div class="fi">
+                <div class="fi-val">24h</div>
+                <div class="fi-lbl">Farm to door</div>
+              </div>
+              <div class="fi">
+                <div class="fi-val">Zero</div>
+                <div class="fi-lbl">Pesticides</div>
+              </div>
+              <div class="fi">
+                <div class="fi-val">4.8&#9733;</div>
+                <div class="fi-lbl">Farmer rating</div>
+              </div>
+            </div>
+          </div>
+          <div class="pd-sticky">
+            <button
+              class="btn btn-moss"
+              id="add-cart-btn"
+              onclick="
+                toast('Added to cart ✓');
+                go('v-cart');
+              "
+            >
+              Add to cart &mdash; &#8377;42
+            </button>
+          </div>
+        </div>
+
+        <!-- ═══ CART ═══ -->
+        <div class="view" id="v-cart">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r"></div>
+          </div>
+          <div class="topbar">
+            <div class="ibtn" onclick="go('v-home')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </div>
+            <span class="ttitle">Your Cart</span
+            ><span
+              style="
+                margin-left: auto;
+                font-family: &quot;DM Mono&quot;, monospace;
+                font-size: 11px;
+                color: var(--muted);
+              "
+              >3 items</span
+            >
+          </div>
+          <div class="ci-row">
+            <div class="ci-img"><div class="fc fc-tomato"></div></div>
+            <div class="ci-info">
+              <div class="ci-name">Vine Tomatoes</div>
+              <div class="ci-meta">Ravi's Farm &middot; 500g</div>
+              <div class="ci-price">&#8377;42</div>
+            </div>
+            <div class="ci-stepper">
+              <button class="cs-btn">&#8722;</button
+              ><span class="cs-val">1</span><button class="cs-btn">+</button>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="ci-row">
+            <div class="ci-img"><div class="fc fc-spinach"></div></div>
+            <div class="ci-info">
+              <div class="ci-name">Baby Spinach</div>
+              <div class="ci-meta">Lakshmi Greens &middot; 1 bunch</div>
+              <div class="ci-price">&#8377;56</div>
+            </div>
+            <div class="ci-stepper">
+              <button class="cs-btn">&#8722;</button
+              ><span class="cs-val">2</span><button class="cs-btn">+</button>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="ci-row">
+            <div class="ci-img"><div class="fc fc-mango"></div></div>
+            <div class="ci-info">
+              <div class="ci-name">Alphonso Mango</div>
+              <div class="ci-meta">Konkan Orchards &middot; 1 kg</div>
+              <div class="ci-price">&#8377;110</div>
+            </div>
+            <div class="ci-stepper">
+              <button class="cs-btn">&#8722;</button
+              ><span class="cs-val">1</span><button class="cs-btn">+</button>
+            </div>
+          </div>
+          <div
+            class="coupon-row"
+            onclick="toast('Coupon FARM10 applied! ₹21 saved')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"
+              />
+              <line x1="7" y1="7" x2="7.01" y2="7" />
+            </svg>
+            <div>
+              <div class="c-text">Apply coupon: FARM10</div>
+              <div class="c-sub">Save &#8377;21 on this order</div>
+            </div>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--good)"
+              stroke-width="2"
+              width="14"
+              height="14"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </div>
+          <div class="order-note">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" /></svg
+            >Items from 2 farms &mdash; may arrive in 2 packages.
+          </div>
+          <div class="summary-card">
+            <div class="sum-row">
+              <span>Subtotal</span><span>&#8377;208</span>
+            </div>
+            <div class="sum-row">
+              <span>Delivery fee</span><span>&#8377;25</span>
+            </div>
+            <div class="sum-row">
+              <span>Coupon FARM10</span
+              ><span class="disc">&#8722;&#8377;21</span>
+            </div>
+            <div class="sum-row total">
+              <span>Total</span><span>&#8377;212</span>
+            </div>
+          </div>
+          <div class="cart-foot">
+            <button class="btn btn-moss" onclick="go('v-checkout')">
+              Proceed to checkout &mdash; &#8377;212
+            </button>
+          </div>
+        </div>
+
+        <!-- ═══ CHECKOUT ═══ -->
+        <div class="view" id="v-checkout">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r"></div>
+          </div>
+          <div class="topbar">
+            <div class="ibtn" onclick="go('v-cart')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </div>
+            <span class="ttitle">Checkout</span>
+          </div>
+          <div class="sec-block">
+            <div class="blk-title">Delivery address</div>
+            <div class="addr-card sel">
+              <span class="addr-tag">Home</span>
+              <div>
+                <div class="addr-name">Aditi Sharma</div>
+                <div class="addr-text">
+                  204, Palm Residency, 12th Main Rd,<br />Indiranagar, Bengaluru
+                  560&nbsp;038
+                </div>
+              </div>
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="var(--good)"
+                style="margin-left: auto; flex: none"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+              </svg>
+            </div>
+            <div class="addr-card" onclick="toast('Add new address')">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="var(--muted)"
+                stroke-width="2"
+                style="flex: none"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              <div class="addr-text" style="color: var(--muted)">
+                Add a new address
+              </div>
+            </div>
+          </div>
+          <div class="sec-block" style="padding-top: 16px">
+            <div class="blk-title">Delivery slot</div>
+            <div class="slot-grid">
+              <div class="slot-chip sel">
+                <div class="slot-date">Today</div>
+                <div class="slot-time">6 PM &ndash; 8 PM</div>
+              </div>
+              <div class="slot-chip" onclick="toast('Slot selected')">
+                <div class="slot-date">Today</div>
+                <div class="slot-time">8 PM &ndash; 10 PM</div>
+              </div>
+              <div class="slot-chip" onclick="toast('Slot selected')">
+                <div class="slot-date">Tomorrow</div>
+                <div class="slot-time">7 AM &ndash; 9 AM</div>
+              </div>
+              <div class="slot-chip" onclick="toast('Slot selected')">
+                <div class="slot-date">Tomorrow</div>
+                <div class="slot-time">9 AM &ndash; 11 AM</div>
+              </div>
+            </div>
+          </div>
+          <div class="sec-block" style="padding-top: 16px">
+            <div class="blk-title">Payment method</div>
+            <div class="pay-opt sel">
+              <div class="pay-radio"></div>
+              <div>
+                <div class="pay-label">UPI &mdash; Google Pay</div>
+                <div class="pay-sub">aditi@oksbi</div>
+              </div>
+              <div class="pay-icon pi-upi">G</div>
+            </div>
+            <div class="pay-opt" onclick="toast('Card selected')">
+              <div class="pay-radio"></div>
+              <div>
+                <div class="pay-label">Credit / Debit Card</div>
+                <div class="pay-sub">Visa, Mastercard, Rupay</div>
+              </div>
+              <div class="pay-icon pi-card">&#9829;</div>
+            </div>
+            <div class="pay-opt" onclick="toast('COD selected')">
+              <div class="pay-radio"></div>
+              <div>
+                <div class="pay-label">Cash on Delivery</div>
+                <div class="pay-sub">Pay when order arrives</div>
+              </div>
+              <div class="pay-icon pi-cod">&#8377;</div>
+            </div>
+          </div>
+          <div class="summary-card" style="margin: 14px 18px 0">
+            <div class="sum-row total">
+              <span>Amount to pay</span><span>&#8377;212</span>
+            </div>
+          </div>
+          <div class="cart-foot">
+            <button class="btn btn-moss" onclick="go('v-success')">
+              Place order &mdash; &#8377;212
+            </button>
+          </div>
+        </div>
+
+        <!-- ═══ SUCCESS ═══ -->
+        <div class="view" id="v-success">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r"></div>
+          </div>
+          <div class="success-body">
+            <div class="success-ring">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <div class="success-title">Order placed!</div>
+            <div class="success-sub">
+              Your fresh produce is being packed by Ravi's Farm and will be
+              delivered today by <strong>7:10 PM</strong>.
+            </div>
+            <div class="success-pill">
+              <div class="sp">
+                <div class="sp-val">#FM2291</div>
+                <div class="sp-lbl">Order ID</div>
+              </div>
+              <div class="sp">
+                <div class="sp-val">&#8377;212</div>
+                <div class="sp-lbl">Paid</div>
+              </div>
+              <div class="sp">
+                <div class="sp-val">~45 min</div>
+                <div class="sp-lbl">ETA</div>
+              </div>
+            </div>
+            <button
+              class="btn btn-moss"
+              style="width: 100%; margin-top: 8px"
+              onclick="go('v-tracking')"
+            >
+              Track my order &rarr;
+            </button>
+            <button
+              class="btn btn-outline"
+              style="width: 100%; margin-top: 8px"
+              onclick="go('v-home')"
+            >
+              Continue shopping
+            </button>
+          </div>
+        </div>
+
+        <!-- ═══ TRACKING ═══ -->
+        <div class="view" id="v-tracking">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r"></div>
+          </div>
+          <div class="topbar">
+            <div class="ibtn" onclick="go('v-home')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </div>
+            <span class="ttitle">Live tracking</span>
+          </div>
+          <div class="track-hdr">
+            <div class="oid-lbl">
+              Order #FM2291 &middot; 3 items &middot; &#8377;212
+            </div>
+            <span class="badge amber"
+              ><span class="led"></span>Out for delivery</span
+            >
+            <div class="track-eta" style="margin-top: 8px">
+              Arriving by 7:10 PM
+            </div>
+            <div class="track-sub">
+              Kolar Farm &rarr; Indiranagar &middot; 8.4 km remaining
+            </div>
+          </div>
+          <div class="map-card">
+            <svg viewBox="0 0 357 152" xmlns="http://www.w3.org/2000/svg">
+              <rect width="357" height="152" fill="#E8E4D5" />
+              <rect
+                x="60"
+                y="0"
+                width="16"
+                height="152"
+                fill="#fff"
+                opacity=".65"
+              />
+              <rect
+                x="160"
+                y="0"
+                width="16"
+                height="152"
+                fill="#fff"
+                opacity=".65"
+              />
+              <rect
+                x="262"
+                y="0"
+                width="16"
+                height="152"
+                fill="#fff"
+                opacity=".65"
+              />
+              <rect
+                x="0"
+                y="52"
+                width="357"
+                height="13"
+                fill="#fff"
+                opacity=".65"
+              />
+              <rect
+                x="0"
+                y="100"
+                width="357"
+                height="13"
+                fill="#fff"
+                opacity=".65"
+              />
+              <rect x="78" y="4" width="80" height="46" fill="#C8DCBB" rx="4" />
+              <rect
+                x="180"
+                y="64"
+                width="80"
+                height="34"
+                fill="#C8DCBB"
+                rx="4"
+              />
+              <rect
+                x="78"
+                y="114"
+                width="80"
+                height="36"
+                fill="#C8DCBB"
+                rx="4"
+              />
+              <rect x="20" y="8" width="36" height="42" fill="#CFC8B3" rx="3" />
+              <rect
+                x="280"
+                y="8"
+                width="56"
+                height="42"
+                fill="#CFC8B3"
+                rx="3"
+              />
+              <rect
+                x="280"
+                y="64"
+                width="56"
+                height="34"
+                fill="#CFC8B3"
+                rx="3"
+              />
+              <path
+                d="M62 136 Q100 100 168 58 Q220 24 278 20"
+                stroke="#1E3A28"
+                stroke-width="4"
+                stroke-linecap="round"
+                stroke-dasharray="9 5"
+              />
+              <circle cx="190" cy="54" r="11" fill="#1E3A28" opacity=".9" />
+              <circle cx="190" cy="54" r="5.5" fill="#E09A30" />
+              <circle cx="278" cy="20" r="9" fill="#C05A28" />
+              <circle cx="278" cy="20" r="4.5" fill="#fff" />
+              <circle cx="62" cy="136" r="7" fill="#3A6040" opacity=".6" />
+            </svg>
+            <div
+              style="
+                position: absolute;
+                top: 10px;
+                left: 12px;
+                background: rgba(255, 255, 255, 0.93);
+                padding: 5px 10px;
+                border-radius: 8px;
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--ink);
+              "
+            >
+              Live route
+            </div>
+            <div
+              style="
+                position: absolute;
+                bottom: 10px;
+                right: 12px;
+                background: rgba(255, 255, 255, 0.93);
+                padding: 5px 10px;
+                border-radius: 8px;
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--moss);
+              "
+            >
+              ~22 min away
+            </div>
+          </div>
+          <div class="partner-card">
+            <div class="p-avatar"><div class="delivery-av">S</div></div>
+            <div>
+              <div class="p-name">Suresh Kumar</div>
+              <div class="p-meta">
+                &#9733; 4.9 &middot; Bike &middot; KA-05-AX-3312
+              </div>
+            </div>
+            <div class="p-acts">
+              <div class="p-act" onclick="toast('Calling Suresh…')">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81"
+                  />
+                </svg>
+              </div>
+              <div class="p-act" onclick="toast('Opening chat…')">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="track-steps">
+            <div class="tstep">
+              <div class="tstep-l">
+                <div class="tstep-node done">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <div class="tstep-line done"></div>
+              </div>
+              <div class="tstep-c">
+                <div class="tstep-title">Order placed</div>
+                <div class="tstep-sub">
+                  6:18 PM &middot; Payment confirmed &#8377;212
+                </div>
+              </div>
+            </div>
+            <div class="tstep">
+              <div class="tstep-l">
+                <div class="tstep-node done">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <div class="tstep-line done"></div>
+              </div>
+              <div class="tstep-c">
+                <div class="tstep-title">Farmer accepted</div>
+                <div class="tstep-sub">
+                  6:22 PM &middot; Ravi's Farm packing your order
+                </div>
+              </div>
+            </div>
+            <div class="tstep">
+              <div class="tstep-l">
+                <div class="tstep-node done">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <div class="tstep-line done"></div>
+              </div>
+              <div class="tstep-c">
+                <div class="tstep-title">Picked up</div>
+                <div class="tstep-sub">
+                  6:44 PM &middot; Suresh picked up your order
+                </div>
+              </div>
+            </div>
+            <div class="tstep">
+              <div class="tstep-l">
+                <div class="tstep-node now">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <div class="tstep-line"></div>
+              </div>
+              <div class="tstep-c">
+                <div class="tstep-title amber">Out for delivery</div>
+                <div class="tstep-sub">8.4 km &middot; ETA 7:10 PM</div>
+              </div>
+            </div>
+            <div class="tstep">
+              <div class="tstep-l">
+                <div class="tstep-node todo">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+              </div>
+              <div class="tstep-c">
+                <div class="tstep-title dim">Delivered</div>
+                <div class="tstep-sub">Expected 7:10 PM</div>
+              </div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="ni" onclick="go('v-home')">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg
+              >Home
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-categories')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" /></svg
+              >Categories
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-cart')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.91-1.39L23 6H6"
+                /></svg
+              >Cart
+              <div class="dot"></div>
+            </div>
+            <div class="ni on" onclick="go('v-tracking')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                />
+                <rect x="9" y="3" width="6" height="4" rx="1" /></svg
+              >Orders
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-profile')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+              >Profile
+              <div class="dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ PROFILE ═══ -->
+        <div class="view" id="v-profile">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r"></div>
+          </div>
+          <div class="topbar">
+            <span class="ttitle">My Profile</span>
+            <div
+              class="ibtn"
+              style="margin-left: auto"
+              onclick="toast('Settings')"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="prof-hero">
+            <div class="prof-av">A</div>
+            <div>
+              <div class="prof-name">Aditi Sharma</div>
+              <div class="prof-ph">+91 98765 43210</div>
+              <div style="margin-top: 6px">
+                <span class="badge green" style="font-size: 9px"
+                  ><span class="led"></span>Verified</span
+                >
+              </div>
+            </div>
+            <div
+              class="ibtn"
+              style="margin-left: auto"
+              onclick="toast('Edit profile')"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="prof-stats">
+            <div class="pstat">
+              <div class="ps-val">12</div>
+              <div class="ps-lbl">Orders</div>
+            </div>
+            <div class="pstat">
+              <div class="ps-val">&#8377;150</div>
+              <div class="ps-lbl">Wallet</div>
+            </div>
+            <div class="pstat">
+              <div class="ps-val">4</div>
+              <div class="ps-lbl">Reviews</div>
+            </div>
+          </div>
+          <div class="menu-sec">
+            <div class="menu-lbl">Account</div>
+            <div class="menu-card">
+              <div class="mitem" onclick="toast('Order history')">
+                <div class="micon" style="background: #eff7f2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--good)"
+                    stroke-width="2"
+                  >
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 01-8 0" />
+                  </svg>
+                </div>
+                <div class="mtext">
+                  <div class="mtitle">Order History</div>
+                  <div class="msub">12 orders placed</div>
+                </div>
+                <div class="mright">
+                  <span class="mbadge">1 active</span
+                  ><span class="mchev"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="9 18 15 12 9 6" /></svg
+                  ></span>
+                </div>
+              </div>
+              <div class="mitem" onclick="toast('Saved addresses')">
+                <div class="micon" style="background: #fef3ea">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--terra)"
+                    stroke-width="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div class="mtext">
+                  <div class="mtitle">Saved Addresses</div>
+                  <div class="msub">2 addresses</div>
+                </div>
+                <div class="mright">
+                  <span class="mchev"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="9 18 15 12 9 6" /></svg
+                  ></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="menu-sec">
+            <div class="menu-lbl">Savings</div>
+            <div class="menu-card">
+              <div class="mitem" onclick="toast('Wallet: ₹150 available')">
+                <div class="micon" style="background: #eff7f2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--good)"
+                    stroke-width="2"
+                  >
+                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                    <path d="M16 3H8l-2 4h12l-2-4z" />
+                  </svg>
+                </div>
+                <div class="mtext">
+                  <div class="mtitle">My Wallet</div>
+                  <div class="msub">Balance available</div>
+                </div>
+                <div class="mright">
+                  <span class="wallet-pill">&#8377;150</span
+                  ><span class="mchev"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="9 18 15 12 9 6" /></svg
+                  ></span>
+                </div>
+              </div>
+              <div class="mitem" onclick="toast('3 coupons available!')">
+                <div class="micon" style="background: #fef9ec">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--turmeric)"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"
+                    />
+                    <line x1="7" y1="7" x2="7.01" y2="7" />
+                  </svg>
+                </div>
+                <div class="mtext">
+                  <div class="mtitle">Coupons</div>
+                  <div class="msub">3 available</div>
+                </div>
+                <div class="mright">
+                  <span class="mbadge" style="background: var(--turmeric)"
+                    >3</span
+                  ><span class="mchev"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="9 18 15 12 9 6" /></svg
+                  ></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="menu-sec">
+            <div class="menu-lbl">More</div>
+            <div class="menu-card">
+              <div class="mitem" onclick="toast('My reviews')">
+                <div class="micon" style="background: #fef9ec">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--turmeric)"
+                    stroke-width="2"
+                  >
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    />
+                  </svg>
+                </div>
+                <div class="mtext">
+                  <div class="mtitle">My Reviews</div>
+                  <div class="msub">4 reviews written</div>
+                </div>
+                <div class="mright">
+                  <span class="mchev"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="9 18 15 12 9 6" /></svg
+                  ></span>
+                </div>
+              </div>
+              <div class="mitem" onclick="go('v-login')">
+                <div class="micon" style="background: #fbeaea">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--red)"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
+                    />
+                  </svg>
+                </div>
+                <div class="mtext">
+                  <div class="mtitle" style="color: var(--red)">Sign out</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="height: 16px"></div>
+          <div class="bnav">
+            <div class="ni" onclick="go('v-home')">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg
+              >Home
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-categories')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" /></svg
+              >Categories
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-cart')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.91-1.39L23 6H6"
+                /></svg
+              >Cart
+              <div class="dot"></div>
+            </div>
+            <div class="ni" onclick="go('v-tracking')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                />
+                <rect x="9" y="3" width="6" height="4" rx="1" /></svg
+              >Orders
+              <div class="dot"></div>
+            </div>
+            <div class="ni on" onclick="go('v-profile')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+              >Profile
+              <div class="dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════
+     ROLE SELECTION SCREEN
+════════════════════════════════════════════ -->
+        <div class="view" id="v-role-select">
+          <div class="sb">
+            <div class="sb-pill"></div>
+            <span style="z-index: 2">9:41</span>
+            <div class="sb-r">
+              <svg
+                viewBox="0 0 18 12"
+                width="18"
+                height="12"
+                fill="currentColor"
+              >
+                <rect x="0" y="3" width="3" height="9" rx="1" />
+                <rect x="4" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="0" width="3" height="12" rx="1" />
+              </svg>
+            </div>
+          </div>
+
+          <div
+            style="
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              padding: 0 0 12px;
+              gap: 28px;
+            "
+          >
+            <div class="role-header">
+              <div class="role-logo">
+                <svg viewBox="0 0 44 44" fill="none">
+                  <path
+                    d="M22 4C14 8 8 16 8 26c0 2 .3 4 .8 5.8C13 33.3 17.3 34 22 34s9-.7 13.2-2.2C35.7 30 36 28 36 26c0-10-6-18-14-22Z"
+                    fill="#E09A30"
+                  />
+                  <path
+                    d="M22 34C10 34 4 40 4 40h36s-6-6-18-6Z"
+                    fill="rgba(255,255,255,.1)"
+                  />
+                  <path
+                    d="M22 10 Q20 20 14 28"
+                    stroke="rgba(255,255,255,.25)"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <div class="role-headline">Who are<br />you today?</div>
+              <div class="role-sub">Select your role to continue</div>
+            </div>
+
+            <div class="role-cards">
+              <!-- Customer -->
+              <div
+                class="role-card"
+                id="card-customer"
+                onclick="selectRole('customer')"
+              >
+                <div
+                  class="role-card-icon"
+                  style="background: rgba(224, 154, 48, 0.15)"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--turmeric)"
+                    stroke-width="2"
+                  >
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <div class="role-card-body">
+                  <div class="role-card-title">Customer</div>
+                  <div class="role-card-desc">
+                    Browse &amp; order fresh farm produce
+                  </div>
+                </div>
+                <div class="role-card-arrow">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Farmer -->
+              <div
+                class="role-card"
+                id="card-farmer"
+                onclick="selectRole('farmer')"
+              >
+                <div
+                  class="role-card-icon"
+                  style="background: rgba(46, 112, 72, 0.2)"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#5DBF6A"
+                    stroke-width="2"
+                  >
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                </div>
+                <div class="role-card-body">
+                  <div class="role-card-title">Farmer</div>
+                  <div class="role-card-desc">
+                    Manage products, orders &amp; earnings
+                  </div>
+                </div>
+                <div class="role-card-arrow">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Delivery Partner -->
+              <div
+                class="role-card"
+                id="card-delivery"
+                onclick="selectRole('delivery')"
+              >
+                <div
+                  class="role-card-icon"
+                  style="background: rgba(36, 56, 80, 0.35)"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#7AAED4"
+                    stroke-width="2"
+                  >
+                    <rect x="1" y="3" width="15" height="13" rx="2" />
+                    <path d="M16 8h4l3 5v3h-7V8z" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                  </svg>
+                </div>
+                <div class="role-card-body">
+                  <div class="role-card-title">Delivery Partner</div>
+                  <div class="role-card-desc">
+                    Pick up &amp; deliver orders on route
+                  </div>
+                </div>
+                <div class="role-card-arrow">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="role-footer">
+              <div class="role-selected-badge" id="role-badge">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span id="role-badge-text">Role selected</span>
+              </div>
+              <button
+                class="btn btn-moss"
+                id="role-continue-btn"
+                style="
+                  opacity: 0.4;
+                  pointer-events: none;
+                  background: var(--turmeric);
+                  color: #1a2010;
+                "
+                onclick="continueFromRole()"
+              >
+                Continue &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════
+     FARMER DASHBOARD
+════════════════════════════════════════════ -->
+        <div class="view" id="v-farmer">
+          <!-- Header -->
+          <div class="farmer-hdr">
+            <div class="farmer-hdr-top">
+              <div>
+                <div class="farmer-hdr-greet">Good morning</div>
+                <div class="farmer-hdr-name">Ravi Shankar 🌾</div>
+              </div>
+              <div class="farmer-hdr-av">R</div>
+            </div>
+            <div class="farmer-stats-row">
+              <div class="farmer-stat">
+                <div class="farmer-stat-val">₹4,280</div>
+                <div class="farmer-stat-lbl">Today</div>
+              </div>
+              <div class="farmer-stat">
+                <div class="farmer-stat-val">12</div>
+                <div class="farmer-stat-lbl">Orders</div>
+              </div>
+              <div class="farmer-stat">
+                <div class="farmer-stat-val">4.8★</div>
+                <div class="farmer-stat-lbl">Rating</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="farmer-body">
+            <!-- New Orders -->
+            <div class="f-section-title">
+              New Orders
+              <span
+                style="
+                  font-family: &quot;DM Mono&quot;, monospace;
+                  font-size: 11px;
+                  color: var(--terra);
+                  background: var(--warn-bg);
+                  padding: 2px 8px;
+                  border-radius: 8px;
+                  margin-left: 6px;
+                "
+                >3 new</span
+              >
+            </div>
+
+            <div class="order-req-card">
+              <div class="orc-top">
+                <span class="orc-id">#FM002291 &middot; 6:18 PM</span>
+                <span class="orc-badge new">NEW</span>
+              </div>
+              <div class="orc-items">Vine Tomatoes ×2 kg, Baby Spinach ×1</div>
+              <div class="orc-meta">
+                &#8377;148 &middot; Deliver by 8 PM &middot; Indiranagar
+              </div>
+              <div class="orc-actions">
+                <button
+                  class="orc-btn reject"
+                  onclick="toast('Order rejected')"
+                >
+                  Reject
+                </button>
+                <button
+                  class="orc-btn accept"
+                  onclick="toast('Order accepted ✓')"
+                >
+                  Accept Order
+                </button>
+              </div>
+            </div>
+
+            <div class="order-req-card">
+              <div class="orc-top">
+                <span class="orc-id">#FM002289 &middot; 5:52 PM</span>
+                <span class="orc-badge prep">PREPARING</span>
+              </div>
+              <div class="orc-items">
+                Alphonso Mango ×1 kg, Foxtail Millet ×500g
+              </div>
+              <div class="orc-meta">
+                &#8377;175 &middot; Deliver by 7 PM &middot; Koramangala
+              </div>
+              <div class="orc-actions">
+                <button
+                  class="orc-btn dispatch"
+                  onclick="toast('Marked as dispatched ✓')"
+                >
+                  Mark Dispatched
+                </button>
+              </div>
+            </div>
+
+            <!-- My Products -->
+            <div class="f-section-title" style="margin-top: 8px">
+              My Products
+              <span
+                onclick="toast('Add product')"
+                style="
+                  float: right;
+                  font-family: &quot;DM Mono&quot;, monospace;
+                  font-size: 10px;
+                  color: var(--terra);
+                  cursor: pointer;
+                "
+                >+ Add new</span
+              >
+            </div>
+            <div class="prod-quick-row">
+              <div class="pq-card">
+                <div class="pq-img">
+                  <div class="fc fc-tomato">
+                    <img
+                      class="real-img"
+                      src="https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
+                      onerror="this.remove()"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div class="pq-name">Vine Tomatoes</div>
+                <div class="pq-stock" style="color: var(--good)">
+                  38 kg in stock
+                </div>
+                <div class="pq-price">₹42/kg</div>
+              </div>
+              <div class="pq-card">
+                <div class="pq-img">
+                  <div class="fc fc-spinach">
+                    <img
+                      class="real-img"
+                      src="https://images.pexels.com/photos/2325843/pexels-photo-2325843.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
+                      onerror="this.remove()"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div class="pq-name">Baby Spinach</div>
+                <div class="pq-stock" style="color: var(--warn)">
+                  4 bunches left
+                </div>
+                <div class="pq-price">₹28/bun</div>
+              </div>
+              <div class="pq-card">
+                <div class="pq-img">
+                  <div class="fc fc-mango">
+                    <img
+                      class="real-img"
+                      src="https://images.pexels.com/photos/918643/pexels-photo-918643.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
+                      onerror="this.remove()"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div class="pq-name">Alphonso Mango</div>
+                <div class="pq-stock" style="color: var(--good)">
+                  22 kg in stock
+                </div>
+                <div class="pq-price">₹110/kg</div>
+              </div>
+              <div class="pq-card">
+                <div class="pq-img">
+                  <div class="fc fc-millet">
+                    <img
+                      class="real-img"
+                      src="https://images.pexels.com/photos/4110097/pexels-photo-4110097.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
+                      onerror="this.remove()"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div class="pq-name">Foxtail Millet</div>
+                <div class="pq-stock" style="color: var(--red)">
+                  2 kg — Low!
+                </div>
+                <div class="pq-price">₹65/kg</div>
+              </div>
+            </div>
+
+            <!-- Earnings summary -->
+            <div
+              style="
+                background: #fff;
+                border-radius: 16px;
+                border: 1px solid var(--line);
+                padding: 16px;
+                box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.08);
+              "
+            >
+              <div
+                style="
+                  font-family: &quot;Fraunces&quot;, serif;
+                  font-size: 15px;
+                  color: var(--ink);
+                  margin-bottom: 14px;
+                "
+              >
+                This week
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: 0;
+                  border-radius: 10px;
+                  overflow: hidden;
+                  border: 1px solid var(--line);
+                "
+              >
+                <div
+                  style="
+                    flex: 1;
+                    padding: 12px;
+                    text-align: center;
+                    border-right: 1px solid var(--line);
+                  "
+                >
+                  <div
+                    style="
+                      font-family: &quot;Fraunces&quot;, serif;
+                      font-size: 18px;
+                      color: var(--ink);
+                    "
+                  >
+                    ₹22,840
+                  </div>
+                  <div
+                    style="
+                      font-size: 9.5px;
+                      color: var(--muted);
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                      margin-top: 2px;
+                    "
+                  >
+                    Revenue
+                  </div>
+                </div>
+                <div
+                  style="
+                    flex: 1;
+                    padding: 12px;
+                    text-align: center;
+                    border-right: 1px solid var(--line);
+                  "
+                >
+                  <div
+                    style="
+                      font-family: &quot;Fraunces&quot;, serif;
+                      font-size: 18px;
+                      color: var(--ink);
+                    "
+                  >
+                    67
+                  </div>
+                  <div
+                    style="
+                      font-size: 9.5px;
+                      color: var(--muted);
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                      margin-top: 2px;
+                    "
+                  >
+                    Orders
+                  </div>
+                </div>
+                <div style="flex: 1; padding: 12px; text-align: center">
+                  <div
+                    style="
+                      font-family: &quot;Fraunces&quot;, serif;
+                      font-size: 18px;
+                      color: var(--good);
+                    "
+                  >
+                    +18%
+                  </div>
+                  <div
+                    style="
+                      font-size: 9.5px;
+                      color: var(--muted);
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                      margin-top: 2px;
+                    "
+                  >
+                    vs last wk
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Farmer Bottom Nav -->
+          <div class="farmer-bnav">
+            <div class="fni on">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg
+              >Home
+              <div class="dot"></div>
+            </div>
+            <div class="fni" onclick="toast('Orders')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                />
+                <rect x="9" y="3" width="6" height="4" rx="1" />
+                <line x1="9" y1="12" x2="15" y2="12" />
+                <line x1="9" y1="16" x2="13" y2="16" /></svg
+              >Orders
+              <div class="dot"></div>
+            </div>
+            <div class="fni" onclick="toast('Products')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"
+                /></svg
+              >Products
+              <div class="dot"></div>
+            </div>
+            <div class="fni" onclick="toast('Earnings')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg
+              >Earnings
+              <div class="dot"></div>
+            </div>
+            <div class="fni" onclick="go('v-role-select')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                /></svg
+              >Switch
+              <div class="dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════
+     DELIVERY PARTNER DASHBOARD
+════════════════════════════════════════════ -->
+        <div class="view" id="v-delivery">
+          <!-- Header -->
+          <div class="del-hdr">
+            <div class="del-hdr-top">
+              <div>
+                <div class="del-hdr-greet">On duty since 10:00 AM</div>
+                <div class="del-hdr-name">Suresh Kumar 🛵</div>
+              </div>
+              <div class="del-hdr-av">S</div>
+            </div>
+            <div class="del-toggle-row">
+              <div>
+                <div class="del-toggle-label">Available for delivery</div>
+                <div class="del-toggle-sub">
+                  You are online &mdash; tap to go offline
+                </div>
+              </div>
+              <div
+                class="toggle-switch"
+                id="avail-toggle"
+                onclick="toggleAvailability()"
+              ></div>
+            </div>
+            <div class="del-stats-row">
+              <div class="del-stat">
+                <div class="del-stat-val">6</div>
+                <div class="del-stat-lbl">Delivered today</div>
+              </div>
+              <div class="del-stat">
+                <div class="del-stat-val">₹540</div>
+                <div class="del-stat-lbl">Earned today</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="del-body">
+            <div
+              style="
+                font-family: &quot;Fraunces&quot;, serif;
+                font-size: 16px;
+                color: var(--ink);
+                margin-bottom: 12px;
+              "
+            >
+              Assigned Orders
+              <span
+                style="
+                  font-family: &quot;DM Mono&quot;, monospace;
+                  font-size: 10px;
+                  background: #eef0f8;
+                  color: #4050a0;
+                  padding: 2px 8px;
+                  border-radius: 8px;
+                  margin-left: 6px;
+                "
+                >2 active</span
+              >
+            </div>
+
+            <!-- Assigned order 1 -->
+            <div class="assigned-card">
+              <div class="ac-header">
+                <span class="ac-order-id">#FM002291 &middot; 3 items</span>
+                <span class="ac-badge pickup">PICKUP</span>
+              </div>
+              <div class="ac-body">
+                <div style="display: flex; gap: 12px; align-items: flex-start">
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      padding-top: 3px;
+                    "
+                  >
+                    <div
+                      class="ac-route-dot"
+                      style="background: var(--terra)"
+                    ></div>
+                    <div class="ac-route-line"></div>
+                    <div
+                      class="ac-route-dot"
+                      style="background: var(--good)"
+                    ></div>
+                  </div>
+                  <div class="ac-route-col">
+                    <div>
+                      <div class="ac-route-info">Ravi&apos;s Farm, Kolar</div>
+                      <div class="ac-route-sub">
+                        Pickup point &middot; 4.2 km away
+                      </div>
+                    </div>
+                    <div style="height: 14px"></div>
+                    <div>
+                      <div class="ac-route-info">
+                        204 Palm Residency, Indiranagar
+                      </div>
+                      <div class="ac-route-sub">
+                        Drop point &middot; 12.6 km total
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style="
+                    margin-top: 12px;
+                    padding-top: 12px;
+                    border-top: 1px solid var(--line);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <div>
+                    <div class="ac-amount">₹90 earned</div>
+                    <div class="ac-meta">Vine Tomatoes, Spinach, Mango</div>
+                  </div>
+                  <div style="text-align: right">
+                    <div
+                      style="
+                        font-family: &quot;DM Mono&quot;, monospace;
+                        font-size: 10px;
+                        color: var(--muted);
+                      "
+                    >
+                      ETA pickup
+                    </div>
+                    <div
+                      style="
+                        font-size: 14px;
+                        font-weight: 700;
+                        color: var(--ink);
+                      "
+                    >
+                      ~18 min
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ac-actions">
+                <button
+                  class="ac-btn nav"
+                  onclick="toast('Opening navigation…')"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    style="display: inline; margin-right: 5px"
+                  >
+                    <polygon points="3 11 22 2 13 21 11 13 3 11" />
+                  </svg>
+                  Navigate
+                </button>
+                <button
+                  class="ac-btn confirm"
+                  onclick="toast('Pickup confirmed ✓')"
+                >
+                  Confirm Pickup
+                </button>
+              </div>
+            </div>
+
+            <!-- Assigned order 2 -->
+            <div class="assigned-card">
+              <div class="ac-header">
+                <span class="ac-order-id">#FM002288 &middot; 2 items</span>
+                <span class="ac-badge delivering">DELIVERING</span>
+              </div>
+              <div class="ac-body">
+                <div style="display: flex; gap: 12px; align-items: flex-start">
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      padding-top: 3px;
+                    "
+                  >
+                    <div
+                      class="ac-route-dot"
+                      style="background: var(--good)"
+                    ></div>
+                    <div class="ac-route-line"></div>
+                    <div
+                      class="ac-route-dot"
+                      style="background: var(--good)"
+                    ></div>
+                  </div>
+                  <div class="ac-route-col">
+                    <div>
+                      <div class="ac-route-info">
+                        Picked up &mdash; En route
+                      </div>
+                      <div class="ac-route-sub">Left farm at 6:44 PM</div>
+                    </div>
+                    <div style="height: 14px"></div>
+                    <div>
+                      <div class="ac-route-info">18 HSR Layout Sector 1</div>
+                      <div class="ac-route-sub">
+                        Drop &middot; 3.2 km remaining
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style="
+                    margin-top: 12px;
+                    padding-top: 12px;
+                    border-top: 1px solid var(--line);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <div>
+                    <div class="ac-amount">₹70 earned</div>
+                    <div class="ac-meta">Alphonso Mango, Oats</div>
+                  </div>
+                  <div style="text-align: right">
+                    <div
+                      style="
+                        font-family: &quot;DM Mono&quot;, monospace;
+                        font-size: 10px;
+                        color: var(--muted);
+                      "
+                    >
+                      ETA delivery
+                    </div>
+                    <div
+                      style="
+                        font-size: 14px;
+                        font-weight: 700;
+                        color: var(--good);
+                      "
+                    >
+                      ~12 min
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ac-actions">
+                <button
+                  class="ac-btn nav"
+                  onclick="toast('Opening navigation…')"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    style="display: inline; margin-right: 5px"
+                  >
+                    <polygon points="3 11 22 2 13 21 11 13 3 11" />
+                  </svg>
+                  Navigate
+                </button>
+                <button
+                  class="ac-btn confirm"
+                  onclick="toast('Delivery confirmed ✓')"
+                >
+                  Confirm Delivery
+                </button>
+              </div>
+            </div>
+
+            <!-- Today summary -->
+            <div
+              style="
+                background: linear-gradient(135deg, #1a2838, #243850);
+                border-radius: 16px;
+                padding: 16px;
+                color: #fff;
+              "
+            >
+              <div
+                style="
+                  font-family: &quot;Fraunces&quot;, serif;
+                  font-size: 15px;
+                  margin-bottom: 12px;
+                "
+              >
+                Today&apos;s Summary
+              </div>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr;
+                  gap: 10px;
+                  text-align: center;
+                "
+              >
+                <div>
+                  <div
+                    style="
+                      font-family: &quot;Fraunces&quot;, serif;
+                      font-size: 18px;
+                    "
+                  >
+                    6
+                  </div>
+                  <div
+                    style="
+                      font-size: 9.5px;
+                      opacity: 0.5;
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                    "
+                  >
+                    Delivered
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style="
+                      font-family: &quot;Fraunces&quot;, serif;
+                      font-size: 18px;
+                    "
+                  >
+                    ₹540
+                  </div>
+                  <div
+                    style="
+                      font-size: 9.5px;
+                      opacity: 0.5;
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                    "
+                  >
+                    Earned
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style="
+                      font-family: &quot;Fraunces&quot;, serif;
+                      font-size: 18px;
+                    "
+                  >
+                    4.9★
+                  </div>
+                  <div
+                    style="
+                      font-size: 9.5px;
+                      opacity: 0.5;
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                    "
+                  >
+                    Rating
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery Bottom Nav -->
+          <div class="del-bnav">
+            <div class="dni on">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg
+              >Home
+              <div class="dot"></div>
+            </div>
+            <div class="dni" onclick="toast('My orders')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="1" y="3" width="15" height="13" rx="2" />
+                <path d="M16 8h4l3 5v3h-7V8z" />
+                <circle cx="5.5" cy="18.5" r="2.5" />
+                <circle cx="18.5" cy="18.5" r="2.5" /></svg
+              >Orders
+              <div class="dot"></div>
+            </div>
+            <div class="dni" onclick="toast('Earnings')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg
+              >Earnings
+              <div class="dot"></div>
+            </div>
+            <div class="dni" onclick="toast('My profile')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+              >Profile
+              <div class="dot"></div>
+            </div>
+            <div class="dni" onclick="go('v-role-select')">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                /></svg
+              >Switch
+              <div class="dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+      </div>
+    </div>
+
+    <script>
+      function go(id) {
+        document.querySelectorAll(".view").forEach(function (v) {
+          v.classList.remove("active");
+        });
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.add("active");
+          el.scrollTop = 0;
+        }
+      }
+      var qty = 1;
+      function changeQty(d) {
+        qty = Math.max(1, qty + d);
+        document.getElementById("qtyval").textContent = qty;
+        var b = document.getElementById("add-cart-btn");
+        if (b) b.textContent = "Add to cart — ₹" + 42 * qty;
+      }
+      var tt;
+      function toast(msg) {
+        var t = document.getElementById("toast");
+        t.textContent = "✓ " + msg;
+        t.classList.add("show");
+        clearTimeout(tt);
+        tt = setTimeout(function () {
+          t.classList.remove("show");
+        }, 2200);
+      }
+      setTimeout(function () {
+        go("v-role-select");
+      }, 1500);
+
+      /* ── ROLE-BASED AUTH LOGIC ── */
+      var selectedRole = null;
+
+      var roleConfig = {
+        customer: { label: "Customer", dest: "v-home", color: "#E09A30" },
+        farmer: { label: "Farmer", dest: "v-farmer", color: "#5DBF6A" },
+        delivery: {
+          label: "Delivery Partner",
+          dest: "v-delivery",
+          color: "#7AAED4",
+        },
+      };
+
+      function selectRole(role) {
+        selectedRole = role;
+        // Reset all cards
+        ["customer", "farmer", "delivery"].forEach(function (r) {
+          document.getElementById("card-" + r).classList.remove("selected");
+        });
+        // Highlight selected
+        document.getElementById("card-" + role).classList.add("selected");
+        // Show badge
+        var badge = document.getElementById("role-badge");
+        badge.classList.add("show");
+        document.getElementById("role-badge-text").textContent =
+          roleConfig[role].label + " selected";
+        // Enable continue button
+        var btn = document.getElementById("role-continue-btn");
+        btn.style.opacity = "1";
+        btn.style.pointerEvents = "auto";
+      }
+
+      function continueFromRole() {
+        if (!selectedRole) return;
+        // Show role pill on login screen
+        var pill = document.getElementById("login-role-pill");
+        if (pill) {
+          pill.style.display = "inline-flex";
+          document.getElementById("login-role-text").textContent =
+            roleConfig[selectedRole].label;
+        }
+        go("v-login");
+      }
+
+      function verifyOTP() {
+        if (!selectedRole) {
+          go("v-home");
+          return;
+        }
+        go(roleConfig[selectedRole].dest);
+      }
+
+      function toggleAvailability() {
+        var sw = document.getElementById("avail-toggle");
+        if (sw) {
+          sw.classList.toggle("off");
+          var isOff = sw.classList.contains("off");
+          toast(isOff ? "You are now offline" : "You are now online ✓");
+        }
+      }
+    </script>
+  </body>
+</html>
